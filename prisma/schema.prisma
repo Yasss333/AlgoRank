@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String   @unique
+  image     String?
+  role      UserRole @default(USER)
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  problems      Problem[]
+  submissions   Submission[]
+  problemSolved problemSolved[]
+}
+
+model Problem {
+  id           String     @id @default(uuid())
+  title        String
+  description  String
+  difficulty   Difficulty
+  tags         String[]
+  userID       String
+  examples     Json
+  constraints  String
+  hints        String?
+  editorial    String?
+  testcases    Json
+  codeSnippet  Json
+  refrenceSoln Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User            @relation(fields: [userID], references: [id], onDelete: Cascade)
+  submissions Submission[]   // ✅ ONE problem → MANY submissions
+  solvedBy problemSolved[]
+}
+
+model Submission {
+  id            String   @id @default(uuid())
+  userID        String
+  problemID     String
+  sourceCode    String
+  language      String
+  stdin         String?
+  stdout        String?
+  stderr        String?
+  compileOutput String?
+  status        String
+  memory        String?
+  time          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user    User    @relation(fields: [userID], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemID], references: [id])
+
+  testcases Testcases[]
+}
+
+model Testcases {
+  id            String   @id @default(uuid())
+  submissionID  String
+  testCase      Int
+  passed        Boolean
+  stdout        String?
+  expected      String?
+  stderr        String?
+  compileOutput String?
+  status        String?
+  memory        String?
+  time          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  submission Submission @relation(fields: [submissionID], references: [id], onDelete: Cascade)
+
+  @@index([submissionID])
+}
+
+model problemSolved {
+  id        String   @id @default(uuid())
+  userID    String
+  problemID String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userID], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemID], references: [id], onDelete: Cascade)
+
+  @@unique([userID, problemID])
+}
+
+model playlist {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  userID      String
+  problemID   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // problem Problem @relation(fields: [problemID], references: [id], onDelete: Cascade)
+  problems Problem[]
+}
