@@ -200,28 +200,37 @@ const deleteProblemByIDHandler = async (req, res) => {
   }
 };
 const getSolvedProblemByUserHandler = async (req, res) => {
-    try {
-      const problems=await db.problem.findMany({
-        where:{
-          userID:req.user.id
-        }
-      })
-      if(problems.length==0){
-        return res.status(400).json({
-          message:"This user has no Problems Created"
-        })
-      }
-      return res.status(200).json({
-        message:"Problems Displayed",
-        problems
-      })
-    } catch (error) {
-         console.log(error);
+  try {
+    const problems = await db.problem.findMany({
+      where: {
+        solvedBy: {
+          some: {
+            userID: req.user.id,
+          },
+        },
+      },
+      // this include below is used to add details to thei sproblem as postgress by default does 
+      // not add details 
+      include: {
+        solvedBy: true
+      },
+    });
+    // if (problems.length == 0) {
+    //   return res.status(400).json({
+    //     message: "This user has no Problems Created",
+    //   });
+    // }
+    return res.status(200).json({
+      message: "Problems Displayed",
+      problems,
+    });
+  } catch (error) {
+    console.log(error);
     return res.status(400).json({
-      message:"Failed to get the problems for thsi user",
-      error:error.message
-    })
-    }
+      message: "Failed to get the problems for thsi user",
+      error: error.message,
+    });
+  }
 };
 
 export {
