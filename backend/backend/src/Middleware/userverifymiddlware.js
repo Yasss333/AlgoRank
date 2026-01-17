@@ -29,7 +29,7 @@ export const verfiyJWT = async (req, res, next) => {
           message: "Wrong credentials",
         });
     }
-     req.user=user;
+
     next(); 
   } catch (error) {
     console.error(error);
@@ -38,35 +38,3 @@ export const verfiyJWT = async (req, res, next) => {
       });
   }
 };
-
-
-export const validateAdmin=(async(req,res,next)=>{
-       const userID=req.user.id;
-       console.log(userID);
-      try {
-         const user=await db.user.findUnique({
-          where:{
-            id:userID
-          },
-          select:{
-            role:true
-          }
-         })
-         if(!user || user.role!=="ADMIN"){
-          res.status(403).json({
-            message:"Admin only Forbiden -this route is not acesible to you"
-          })
-          
-         }
-          // res.status(200).json({
-          //   message:"Access GIVEn"
-          //  })
-          next();
-      } catch (error) {
-        console.error("Role check ",error)
-          res.status(400).json({
-            message:"Error valdating role", error
-          })
-      }
-       
-})  

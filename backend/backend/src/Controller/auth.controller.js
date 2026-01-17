@@ -128,7 +128,7 @@ const userCheckHandler = async (req, res) => {
     message:"Ha bhai karliya check bohot  khub ",
     user:req.user,
     })
- 
+
 };
   
 export {
