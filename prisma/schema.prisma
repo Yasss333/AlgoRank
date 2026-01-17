@@ -38,6 +38,9 @@ model User {
   submissions   Submission[]
   problemSolved problemSolved[]
   playlist playlist[]
+  likes Likes[]
+  comments Comments[]
+  nestedComments NestedComments[]
 }
 
 model Problem {
@@ -62,6 +65,8 @@ model Problem {
   submissions Submission[]   // ✅ ONE problem → MANY submissions
   solvedBy problemSolved[]
   problemInplaylist problemsInPlaylist[]
+  likes Likes[]
+  comments Comments[]
 }
 
 model Submission {
@@ -147,4 +152,56 @@ model problemsInPlaylist{
   @@unique([playlistID,problemID])
 }
 
+model Likes{
+  id String @id @default(uuid())
+   userID String
+   problemID String
 
+     createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userID] ,references: [id], onDelete: Cascade, onUpdate:Cascade)
+  problem Problem @relation(fields: [problemID], references: [id], onDelete: Cascade)
+
+  @@unique([userID,problemID])
+}
+
+// 2️⃣ Problem Comments / Discussion
+
+// Users discuss problems (like LeetCode discussion tab)
+
+// Think about:
+
+// One problem → many comments
+
+// One user → many comments
+
+// Comments may have replies (nested?)
+
+// 👉 Extra challenge: self-relation (comment → comment)
+
+model Comments{
+  id String @id @default(uuid())
+  content String
+  userID String
+  problemID String
+   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userID] ,references: [id], onDelete: Cascade, onUpdate:Cascade)
+  problem Problem @relation(fields: [problemID], references: [id], onDelete: Cascade)
+  
+  nestedComment NestedComments[]
+}
+
+model NestedComments{
+  id String @id @default(uuid())
+  content String
+  userID String
+  commentID String
+     createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  comment Comments @relation(fields: [commentID], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userID] ,references: [id], onDelete: Cascade, onUpdate:Cascade)
+  
+}
