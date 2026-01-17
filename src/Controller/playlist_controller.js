@@ -63,7 +63,7 @@ export const addProblemInPlaylist = async (req, res) => {
 
     await db.problemsInPlaylist.createMany({
       data,
-      skipDuplicates: true, // avoids crashing on duplicates
+      skipDuplicates: true,   // avoids crashing on duplicates
     });
 
     return res.status(200).json({
@@ -131,8 +131,9 @@ export const getplaylistdetailsByPlaylistID=async (req,res) => {
 
 export const deletePlaylist= async (req,res) => {
     const {playlistID :id} =req.params;
+
     try {
-        const playlist=await db.playlist.delete({
+        const playlist=await db.playlist.deleteMany({
             where:{
                 id
             }
