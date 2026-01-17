@@ -137,7 +137,8 @@ model playlist {
   problems problemsInPlaylist[]
   user    User    @relation(fields: [userID], references: [id], onDelete: Cascade)
   @@unique([title,userID])// thsi si for unique playlist per user 
-
+  // @@unique([id,userID]) ---> removed becasue redundant as already playlist id is unique 
+  
 }
 
 model problemsInPlaylist{
@@ -166,20 +167,6 @@ model Likes{
   @@unique([userID,problemID])
 }
 
-// 2️⃣ Problem Comments / Discussion
-
-// Users discuss problems (like LeetCode discussion tab)
-
-// Think about:
-
-// One problem → many comments
-
-// One user → many comments
-
-// Comments may have replies (nested?)
-
-// 👉 Extra challenge: self-relation (comment → comment)
-
 model Comments{
   id String @id @default(uuid())
   content String
@@ -205,3 +192,4 @@ model NestedComments{
   user User @relation(fields: [userID] ,references: [id], onDelete: Cascade, onUpdate:Cascade)
   
 }
+
