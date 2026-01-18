@@ -15,12 +15,14 @@ const app = express();
 
 app.use(cors({
   origin:"http://localhost:5173",
+  // origin:"*",
   //for everone acces set as "*"
   credentials:true,
 }))
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 5000;
 
 if (!process.env.SECRET) {

@@ -17,7 +17,7 @@ const Navbar = ()=>{
       <div className="flex w-full justify-between mx-auto max-w-4xl bg-black/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-gray-200/10 p-4 rounded-2xl">
         {/* Logo Section */}
         <Link to="/" className="flex items-center gap-3 cursor-pointer">
-          <img src="/AlgoRank.svg" className="h-18 w-18 bg-primary/20 text-primary border-none px-2 py-2 rounded-full" />
+          <img src="AlgoRank.svg" className="h-18 w-18 bg-primary/20 text-primary border-none px-2 py-2 rounded-full" />
           <span className="text-lg md:text-2xl font-bold tracking-tight text-white hidden md:block">
           AlgoRank
           </span>
@@ -31,7 +31,7 @@ const Navbar = ()=>{
                 <img
                   src={
                     authUser?.image ||
-                    "https://avatar.iran.liara.run/public/boy"
+                    "user.svg"
                   }
                   alt="User Avatar"
                   className="object-cover"

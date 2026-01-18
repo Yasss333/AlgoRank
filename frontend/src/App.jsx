@@ -4,10 +4,10 @@ import {  Toaster} from "react-hot-toast";
 
 import HomePage from './page/HomePage';
 import LoginPage from './page/LoginPage';
-import SignUpPage from './page/SIgnUpPage';
+import SignUpPage from './page/SignUpPage';
 import { useAuthStore } from './store/useAuthStore.js';
-import { Loader } from 'lucide-react';
-
+import {  Loader } from 'lucide-react';
+import Layout from './layout/layout.jsx';
 const App = () => {
   const {authUser, checkAuth,isCheckingAuth}=useAuthStore()
   

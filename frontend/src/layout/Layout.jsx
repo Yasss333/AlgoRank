@@ -2,13 +2,15 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Navbar from '../Components/Navbar'
 
-const layout = () => {
+
+const Layout = () => {
   return (
 
-    <div><Navbar/>
+    <div>
+      <Navbar/>
         <Outlet/>
         </div>   
   )
 }
 
-export default layout
+export default Layout
