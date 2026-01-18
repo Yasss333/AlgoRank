@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import {email, z} from "zod";
 import AuthImagePattern from "../Components/AuthImagePattern";
+import { useAuthStore } from '../store/useAuthStore.js';
 
 
 const LoginSchema=z.object({
@@ -18,13 +19,20 @@ const LoginSchema=z.object({
 const LoginPage = () => {
     const [showPassword, setShowPassword]=useState(false);
     const [isSigninUp, setIsSigninUp] = useState(false);
+   
+    const {login, isLoggingIn}=useAuthStore()
 
     const {
         register, handleSubmit, formState:{errors}
     }=useForm({resolver:zodResolver(LoginSchema)});
 
     const onSubmit=async(data)=>{
-        console.log(data);
+      try {
+        await login(data);
+        console.log("Login Data : ",data);
+      } catch (error) {
+        console.error("Login Failed : ",error)
+      }
     }
   return (
   <div className='h-screen grid lg:grid-cols-2'>
@@ -106,15 +114,15 @@ const LoginPage = () => {
             <button
               type="submit"
               className="btn btn-primary w-full"
-             disabled={isSigninUp}
+             disabled={isLoggingIn}
             >
-               {isSigninUp ? (
+               {isLoggingIn ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
                   Loading...
                 </>
               ) : (
-                "Sign in"
+                "Login"
               )}
             </button>
           </form>

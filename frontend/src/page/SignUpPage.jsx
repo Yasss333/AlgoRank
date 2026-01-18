@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import {email, z} from "zod";
 import AuthImagePattern from "../Components/AuthImagePattern";
+import { useAuthStore } from '../store/useAuthStore.js';
 
 
 const SignUpSchema=z.object({
@@ -19,13 +20,20 @@ const SignUpSchema=z.object({
 const SignUpPage = () => {
     const [showPassword, setShowPassword]=useState(false);
     const [isSigninUp, setIsSigninUp] = useState(false);
+     
+    const {signup,isSigningUp}=useAuthStore();
 
     const {
         register, handleSubmit, formState:{errors}
     }=useForm({resolver:zodResolver(SignUpSchema)});
 
     const onSubmit=async(data)=>{
-        console.log(data);
+      try {
+        await signup(data)
+        console.log("Sign-up data : ",data);
+      } catch (error) {
+        console.error('Sign-up Failed : ',error)
+      }  
     }
   return (
   <div className='h-screen grid lg:grid-cols-2'>

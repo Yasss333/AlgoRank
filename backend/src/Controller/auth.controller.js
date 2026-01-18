@@ -13,7 +13,7 @@ const userRegisterHandler = async (req, res) => {
     });
 
     if (existinguser) {
-      res.status(400).json({
+    return   res.status(400).json({
         error: "User already Exist",
       });
     }
@@ -27,12 +27,15 @@ const userRegisterHandler = async (req, res) => {
         role: UserRole.USER,
       },
     });
-    console.log(process.env.SECRET);
+
+    console.log("JWT SECRET:", process.env.SECRET);
+    console.log("USER ID:", user?.id);
 
     const token = jwt.sign({ id: user.id }, process.env.SECRET, {
       expiresIn: "10d",
     });
-
+      console.log("Token : ",token);
+      
     res.cookie("jwt", token, {
       httpOnly: true,
       sameSite: "strict",

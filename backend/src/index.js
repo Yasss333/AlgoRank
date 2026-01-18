@@ -3,6 +3,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+
 import authRouter from "../src/Routes/auth.routes.js";
 import probRouter from "../src/Routes/problemManagement.route.js"
 import executionRouter from "../src/Routes/execute_coderoutes.js"
@@ -11,9 +13,19 @@ import playlistRoute from "../src/Routes/playlistRoute.js"
 dotenv.config();
 const app = express();
 
+app.use(cors({
+  origin:"http://localhost:5173",
+  //for everone acces set as "*"
+  credentials:true,
+}))
+
 app.use(cookieParser());
 app.use(express.json());
 const PORT = process.env.PORT || 5000;
+
+if (!process.env.SECRET) {
+  throw new Error("JWT SECRET IS MISSING");
+}
 
 app.get("/",(req,res)=>{
   console.log("Hello from AlgoRank ✅ " );
