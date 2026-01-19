@@ -125,11 +125,22 @@ const userLogoutHandler = async (req, res) => {
 };
 const userCheckHandler = async (req, res) => {
   console.log("Ho gaya check bhai ");
-  
+  const user= await db.user.findUnique({
+    where:{
+      id:req.user.id
+    },
+    select:{
+      role:true,
+      name:true,
+      email:true,
+      image:true
+    }
+  })
   res.status(200).json({
     success: true , 
-    message:"Ha bhai karliya check bohot  khub ",
-    user:req.user,
+    message:"Ha bhai karliya check bohot  khub",
+    user:user,
+    
     })
  
 };

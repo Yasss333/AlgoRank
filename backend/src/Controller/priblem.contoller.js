@@ -11,12 +11,12 @@ const createProblemHandler = async (req, res) => {
       examples,
       constraints,
       testcases,
-      codeSnippet,
-      refrenceSoln,
+      codeSnippets,
+      refrenceSolutions,
     } = req.body;
 
     // Validate reference solutions
-    for (const [language, solutionCode] of Object.entries(refrenceSoln)) {
+    for (const [language, solutionCode] of Object.entries(refrenceSolutions)) {
       for (let i = 0; i < testcases.length; i++) {
         const { input, output } = testcases[i];
 
@@ -48,8 +48,8 @@ const createProblemHandler = async (req, res) => {
         examples,
         constraints,
         testcases,
-        codeSnippet,
-        refrenceSoln,
+        codeSnippets,
+        refrenceSolutions  ,
        user: {
   connect: {
     id: req.user.id, // coming from verifyJWT
@@ -133,8 +133,8 @@ const   updateProblemByIDHandler = async (req, res) => {
       examples,
       constraints,
       testcases,
-      codeSnippet,
-      refrenceSoln,
+      codeSnippets,
+      refrenceSolutions  ,
     } = req.body;
   
   try {
@@ -150,8 +150,8 @@ const   updateProblemByIDHandler = async (req, res) => {
         examples,
         constraints,
         testcases,
-        codeSnippet,
-        refrenceSoln
+        codeSnippets,
+        refrenceSolutions  
 }  });
 console.log("Updated  Problem :" +updatedProblem );
 
@@ -279,12 +279,12 @@ export {
 //       examples,
 //       constraints,
 //       testcases,
-//       codeSnippet,
-//       refrenceSoln,
+//       codeSnippets,
+//       refrenceSolutions  ,
 //     } = req.body;
 
 //     // 1️⃣ Validate reference solutions using Judge0
-//     for (const [language, solutionCode] of Object.entries(refrenceSoln)) {
+//     for (const [language, solutionCode] of Object.entries(refrenceSolutions  )) {
 //       const languageId = getJudge0LanguageId(language);
 
 //       if (!languageId) {
@@ -331,8 +331,8 @@ export {
 //         examples,
 //         constraints,
 //         testcases,
-//         codeSnippet,
-//         refrenceSoln,
+//         codeSnippets,
+//         refrenceSolutions  ,
 //         userId: "TEST_ADMIN_ID", // replace with req.user.id later
 //       },
 //     });

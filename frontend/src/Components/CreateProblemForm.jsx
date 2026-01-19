@@ -56,7 +56,7 @@ const problemSchema = z.object({
     PYTHON: z.string().min(1, "Python code snippet is required"),
     JAVA: z.string().min(1, "Java solution is required"),
   }),
-  referenceSolutions: z.object({
+  refrenceSolutions  : z.object({
     JAVASCRIPT: z.string().min(1, "JavaScript solution is required"),
     PYTHON: z.string().min(1, "Python solution is required"),
     JAVA: z.string().min(1, "Java solution is required"),
@@ -173,7 +173,7 @@ class Main {
   }
 }`,
   },
-  referenceSolutions: {
+  refrenceSolutions  : {
     JAVASCRIPT: `/**
 * @param {number} n
 * @return {number}
@@ -418,7 +418,7 @@ public class Main {
 }
 `,
   },
-  referenceSolutions: {
+  refrenceSolutions  : {
     JAVASCRIPT: `/**
    * @param {string} s
    * @return {boolean}
@@ -530,7 +530,7 @@ const CreateProblemForm = () => {
         PYTHON: "def solution():\n    # Write your code here\n    pass",
         JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
       },
-      referenceSolutions: {
+      refrenceSolutions  : {
         JAVASCRIPT: "// Add your reference solution here",
         PYTHON: "# Add your reference solution here",
         JAVA: "// Add your reference solution here",
@@ -888,7 +888,7 @@ const CreateProblemForm = () => {
                         </h4>
                         <div className="border rounded-md overflow-hidden">
                           <Controller
-                            name={`referenceSolutions.${language}`}
+                            name={`refrenceSolutions.${language}`}
                             control={control}
                             render={({ field }) => (
                               <Editor
@@ -909,10 +909,10 @@ const CreateProblemForm = () => {
                             )}
                           />
                         </div>
-                        {errors.referenceSolutions?.[language] && (
+                        {errors.refrenceSolutions  ?.[language] && (
                           <div className="mt-2">
                             <span className="text-error text-sm">
-                              {errors.referenceSolutions[language].message}
+                              {errors.refrenceSolutions  [language].message}
                             </span>
                           </div>
                         )}
