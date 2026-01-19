@@ -78,7 +78,17 @@ const createProblemHandler = async (req, res) => {
 
 const getallProblemHandler = async (req, res) => {
   try {
-      const problems= await db.problem.findMany();
+      const problems= await db.problem.findMany(
+        {
+          include:{
+            solvedBy:{
+              where:{
+                userID:req.user.id
+              }
+            }
+          }
+        }
+      );
       if(!problems){
         res.status(404).json({
           error:"No Problems Found "
