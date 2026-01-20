@@ -38,7 +38,7 @@ const ProblemPage = () => {
 
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
-  const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testcases, setTestCases] = useState([]);
 
@@ -77,17 +77,24 @@ const ProblemPage = () => {
     setCode(problem.codeSnippets?.[lang] || "");
   };
 
-  const handleRunCode = (e) => {
-    e.preventDefault();
-    try {
-      const language_id = getLanguageId(selectedLanguage);
-      const stdin = problem.testcases.map((tc) => tc.input);
-      const expected_outputs = problem.testcases.map((tc) => tc.output);
-      executeCode(code, language_id, stdin, expected_outputs, id);
-    } catch (error) {
-      console.log("Error executing code", error);
-    }
-  };
+  //Piston type code runner 
+ const handleRunCode = (e) => {
+  e.preventDefault();
+
+  try {
+    const stdin = problem.testcases.map((tc) => tc.input).join("\n");
+
+    executeCode({
+      languageKey: selectedLanguage,
+      sourceCode: code,
+      stdin,
+      problemId: id
+    });
+  } catch (error) {
+    console.error("Error executing code", error);
+  }
+};
+
 
   if (isProblemLoading || !problem) {
     return (
@@ -241,7 +248,7 @@ const ProblemPage = () => {
             onChange={handleLanguageChange}
           >
             {Object.keys(problem.codeSnippets || {}).map((lang) => (
-              <option key={lang} value={lang}>
+              <option key={lang} value={lang.toUpperCase()}>
                 {lang.charAt(0).toUpperCase() + lang.slice(1)}
               </option>
             ))}
