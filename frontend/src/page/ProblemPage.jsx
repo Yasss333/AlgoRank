@@ -16,13 +16,13 @@ import {
   ThumbsUp,
   Home,
 } from "lucide-react";
+// import { getLanguageId } from "../lib/lang";
 import { Link, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
-import { getLanguageId } from "../lib/lang";
 import { useExecutionStore } from "../store/useExecutionStore";
 import { useSubmissionStore } from "../store/useSubmissionStore";
-import Submission from "../components/Submission";
-import SubmissionsList from "../components/SubmissionList";
+import Submission from "../Components/Submission";
+import SubmissionsList from "../Components/SubmissionList";
 
 const ProblemPage = () => {
   const { id } = useParams();
@@ -52,7 +52,7 @@ const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
   useEffect(() => {
     if (problem) {
       setCode(
-        problem.codeSnippets?.[selectedLanguage] || submission?.sourceCode || ""
+        problem.codeSnippets?.[selectedLanguage.toLowerCase()] || submission?.sourceCode || ""
       );
       setTestCases(
         problem.testcases?.map((tc) => ({
@@ -69,7 +69,7 @@ const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
     }
   }, [activeTab, id]);
 
-  console.log("submission", submissions);
+  // console.log("submission", submissions);
 
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
