@@ -45,8 +45,8 @@ const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
             >
               <option value="">Select a playlist</option>
               {playlists.map((playlist) => (
-                <option key={playlist.id} value={playlist.id}>
-                  {playlist.name}
+                <option key={playlist.id} value={playlist.title}>
+                  {playlist.title}
                 </option>
               ))}
             </select>

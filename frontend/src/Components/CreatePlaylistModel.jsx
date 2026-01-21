@@ -5,11 +5,14 @@ const CreatePlaylistModal = ({isOpen , onClose , onSubmit}) => {
     const {register , handleSubmit , formState:{errors} , reset} = useForm();
 
     const handleFormSubmit = async (data)=>{
+      console.log( "This is data:",data);
+      
         await onSubmit(data);
         reset()
         onClose()
+        
     }
-
+    
     if(!isOpen) return null;
 
   return (
@@ -31,11 +34,11 @@ const CreatePlaylistModal = ({isOpen , onClose , onSubmit}) => {
               type="text"
               className="input input-bordered w-full"
               placeholder="Enter playlist name"
-              {...register('name', { required: 'Playlist name is required' })}
+              {...register('title', { required: 'Playlist name is required' })}
             />
-            {errors.name && (
+            {errors.title && (
               <label className="label">
-                <span className="label-text-alt text-error">{errors.name.message}</span>
+                <span className="label-text-alt text-error">{errors.title.message}</span>
               </label>
             )}
           </div>

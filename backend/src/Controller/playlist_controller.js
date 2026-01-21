@@ -25,8 +25,8 @@ export const createPlaylist= async (req,res) => {
     
 }
 export const addProblemInPlaylist = async (req, res) => {
-  const { playlistID } = req.params;
-  const { problemID } = req.body; // this is an ARRAY of strings
+  const { playlistId : playlistID } = req.params;
+  const { problemIds: problemID } = req.body; // this is an ARRAY of strings
   const userID = req.user.id;
 
   // 🔍 DEBUG LOGS 
@@ -82,7 +82,7 @@ export const addProblemInPlaylist = async (req, res) => {
 export const getallproblemsfromPlaylist=async(req,res)=>{
       try {
         const userID=req.user.id;
-        const problems=await db.playlist.findMany({
+        const playlists=await db.playlist.findMany({
             where:{
                 userID 
             },
@@ -97,11 +97,11 @@ export const getallproblemsfromPlaylist=async(req,res)=>{
 
         return res.status(200).json({
           message:"All details/problems Fetched Successfully",
-          problems
+          playlists
         })
       } catch (error) {
         console.error(error);
-        return res.status(200).json({
+        return res.status(500).json({
             message:"Failed to get all details ",
             error:error.message
         })
@@ -122,7 +122,7 @@ export const getplaylistdetailsByPlaylistID=async (req,res) => {
     })
   } catch (error) {
      console.error(error);
-        return res.status(200).json({
+        return res.status(500).json({
             message:"Failed to get all details ",
             error:error.message
         })
@@ -144,7 +144,7 @@ export const deletePlaylist= async (req,res) => {
         })
     } catch (error) {
          console.error(error);
-        return res.status(200).json({
+        return res.status(500).json({
             message:"Failed to get all details ",
             error:error.message
         })
@@ -179,7 +179,7 @@ export const removeProblemFromPlaylist= async (req,res) => {
         })
     } catch (error) {
          console.error(error);
-        return res.status(200).json({
+        return res.status(500).json({
             message:"Failed to delete problem from playlist",
             error:error.message
         })

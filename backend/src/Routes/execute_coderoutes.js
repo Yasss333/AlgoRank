@@ -5,7 +5,7 @@ const  router=express.Router();
 
 
 
-// router.post("/",verfiyJWT,executionRouter)  
-router.post("/",executionRouter)  
+router.post("/",verfiyJWT,executionRouter)  
+// router.post("/",executionRouter)  
 
 export default router;  
