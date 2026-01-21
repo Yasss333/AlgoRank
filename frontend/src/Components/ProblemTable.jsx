@@ -3,15 +3,15 @@ import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
 import { Bookmark, PencilIcon, Trash, TrashIcon, Plus } from "lucide-react";
 import { useActions } from "../store/useAction";
-// import AddToPlaylistModal from "./AddToPlaylist";
-// import CreatePlaylistModal from "./CreatePlaylistModal";
-// import { usePlaylistStore } from "../store/usePlaylistStore";
+import AddToPlaylistModal from "./AddToPlaylist";
+import CreatePlaylistModal from "./CreatePlaylistModel";
+import { usePlaylistStore } from "../store/usePlaylistStore";
 
 
 const ProblemsTable = ({ problems }) => {
   const { authUser } = useAuthStore();
   const { onDeleteProblem } = useActions();
-//   const { createPlaylist } = usePlaylistStore();
+  const { createPlaylist } = usePlaylistStore();
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
   const [selectedTag, setSelectedTag] = useState("ALL");
@@ -56,7 +56,9 @@ const ProblemsTable = ({ problems }) => {
   }, [filteredProblems, currentPage]);
 
   const handleDelete = (id) => {
-    onDeleteProblem(id);
+    onDeleteProblem(id); 
+    console.log(id);
+    
   };
 
   const handleCreatePlaylist = async (data) => {
@@ -233,9 +235,9 @@ const ProblemsTable = ({ problems }) => {
           Next
         </button>
       </div>
- 
+            
       {/* Modals */}
-      {/* <CreatePlaylistModal
+      <CreatePlaylistModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreatePlaylist}
@@ -245,7 +247,7 @@ const ProblemsTable = ({ problems }) => {
         isOpen={isAddToPlaylistModalOpen}
         onClose={() => setIsAddToPlaylistModalOpen(false)}
         problemId={selectedProblemId}
-      /> */}
+      />
     </div>
   );
 };
