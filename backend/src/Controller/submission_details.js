@@ -26,7 +26,7 @@ export  const  getallsubHandler=async (req, res)=>{
         }
         return res.status(200).json({
             success:true,
-            Submissions:submission
+            submissions:submission
         })
     } catch (error) {
     console.error(error);

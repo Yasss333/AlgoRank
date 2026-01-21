@@ -6,7 +6,8 @@ import { db } from "../libs/db.js";
 // the below code is just a dry run prcess no db writes done , it is like run over testcases 
 export const executionRouter = async (req, res) => {
   const { sourceCode, languageKey, stdin } = req.body;
-
+     console.log("REQ.BODY:", req.body);
+  console.log("REQ.USER:", req.user);
   try {
     if (!sourceCode || !languageKey) {
       return res.status(400).json({

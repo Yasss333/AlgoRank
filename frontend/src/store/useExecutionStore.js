@@ -9,9 +9,15 @@ export const useExecutionStore = create((set) => ({
   //dry run code 
 executeCode: async ({ sourceCode, languageKey, stdin }) => {
   try {
+    console.log("RUN PAYLOAD:", {
+  sourceCode,
+  languageKey,
+  stdin,
+});
+
     set({ isExecuting: true });
 
-    const res = await axiosInstance.post("/execute-route", {
+    const res = await axiosInstance.post("/execute-route/", {
       sourceCode,
       languageKey,
       stdin,

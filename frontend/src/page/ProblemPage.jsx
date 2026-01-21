@@ -71,7 +71,7 @@ const ProblemPage = () => {
     }
   }, [activeTab, id]);
 
-  // console.log("submission", submissions);
+  console.log("submission", submissions);
 
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
@@ -346,7 +346,7 @@ const ProblemPage = () => {
                     disabled={isExecuting}
                   >
                     {!isExecuting && <Play className="w-4 h-4" />}
-                    Run Code
+                    Run Code(DRY run)
                   </button>
                   <button className="btn btn-success gap-2">
                     Submit Solution

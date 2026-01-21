@@ -7,37 +7,51 @@ import {
 } from "lucide-react";
 
 const SubmissionsList = ({ submissions, isLoading }) => {
-  // Helper function to safely parse JSON strings
-  const safeParse = (data) => {
+
+  /* -----------------------------
+     Helpers
+  ------------------------------ */
+
+  const safeParseArray = (data) => {
+    if (!data || typeof data !== "string") return [];
     try {
-      return JSON.parse(data);
-    } catch (error) {
-      console.error("Error parsing data:", error);
+      const parsed = JSON.parse(data);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
       return [];
     }
   };
 
-  // Helper function to calculate average memory usage
-  const calculateAverageMemory = (memoryData) => {
-    const memoryArray = safeParse(memoryData).map((m) =>
-      parseFloat(m.split(" ")[0])
-    );
-    if (memoryArray.length === 0) return 0;
-    return (
-      memoryArray.reduce((acc, curr) => acc + curr, 0) / memoryArray.length
-    );
+  const extractAverage = (data) => {
+    const arr = safeParseArray(data)
+      .map(v => parseFloat(v))
+      .filter(v => !isNaN(v));
+
+    if (!arr.length) return null;
+
+    return arr.reduce((a, b) => a + b, 0) / arr.length;
   };
 
-  // Helper function to calculate average runtime
-  const calculateAverageTime = (timeData) => {
-    const timeArray = safeParse(timeData).map((t) =>
-      parseFloat(t.split(" ")[0])
-    );
-    if (timeArray.length === 0) return 0;
-    return timeArray.reduce((acc, curr) => acc + curr, 0) / timeArray.length;
+  const getStatusUI = (status) => {
+    if (status === "Accepted") {
+      return {
+        icon: <CheckCircle2 className="w-6 h-6" />,
+        color: "text-success",
+        label: "Accepted",
+      };
+    }
+
+    return {
+      icon: <XCircle className="w-6 h-6" />,
+      color: "text-warning",
+      label: status || "Executed",
+    };
   };
 
-  // Loading state
+  /* -----------------------------
+     Loading / Empty states
+  ------------------------------ */
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -46,20 +60,24 @@ const SubmissionsList = ({ submissions, isLoading }) => {
     );
   }
 
-  // No submissions state
   if (!submissions?.length) {
     return (
-      <div className="text-center p-8">
-        <div className="text-base-content/70">No submissions yet</div>
+      <div className="text-center p-8 text-base-content/70">
+        No submissions yet
       </div>
     );
   }
 
+  /* -----------------------------
+     Render
+  ------------------------------ */
+
   return (
     <div className="space-y-4">
       {submissions.map((submission) => {
-        const avgMemory = calculateAverageMemory(submission.memory);
-        const avgTime = calculateAverageTime(submission.time);
+        const avgMemory = extractAverage(submission.memory);
+        const avgTime = extractAverage(submission.time);
+        const statusUI = getStatusUI(submission.status);
 
         return (
           <div
@@ -68,32 +86,35 @@ const SubmissionsList = ({ submissions, isLoading }) => {
           >
             <div className="card-body p-4">
               <div className="flex items-center justify-between">
-                {/* Left Section: Status and Language */}
+
+                {/* Left: Status + Language */}
                 <div className="flex items-center gap-4">
-                  {submission.status === "Accepted" ? (
-                    <div className="flex items-center gap-2 text-success">
-                      <CheckCircle2 className="w-6 h-6" />
-                      <span className="font-semibold">Accepted</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 text-error">
-                      <XCircle className="w-6 h-6" />
-                      <span className="font-semibold">{submission.status}</span>
-                    </div>
-                  )}
-                  <div className="badge badge-neutral">{submission.language}</div>
+                  <div className={`flex items-center gap-2 ${statusUI.color}`}>
+                    {statusUI.icon}
+                    <span className="font-semibold">{statusUI.label}</span>
+                  </div>
+
+                  <div className="badge badge-neutral">
+                    {submission.language || "Unknown"}
+                  </div>
                 </div>
 
-                {/* Right Section: Runtime, Memory, and Date */}
+                {/* Right: Metrics */}
                 <div className="flex items-center gap-4 text-base-content/70">
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    <span>{avgTime.toFixed(3)} s</span>
+                    <span>
+                      {avgTime !== null ? `${avgTime.toFixed(3)} s` : "N/A"}
+                    </span>
                   </div>
+
                   <div className="flex items-center gap-1">
                     <Memory className="w-4 h-4" />
-                    <span>{avgMemory.toFixed(0)} KB</span>
+                    <span>
+                      {avgMemory !== null ? `${avgMemory.toFixed(0)} KB` : "N/A"}
+                    </span>
                   </div>
+
                   <div className="flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
                     <span>
@@ -101,6 +122,7 @@ const SubmissionsList = ({ submissions, isLoading }) => {
                     </span>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>

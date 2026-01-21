@@ -4,7 +4,7 @@ import { db } from "../libs/db.js";
 
 export const verfiyJWT = async (req, res, next) => {
   const token = req.cookies.jwt;
-  console.log("Token : ", token);
+  // console.log("Token : ", token);
   let decoded;
   try {
     decoded = await jwt.verify(token , process.env.SECRET);
