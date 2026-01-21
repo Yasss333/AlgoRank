@@ -38,7 +38,7 @@ const ProblemPage = () => {
 
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
-const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
+  const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testcases, setTestCases] = useState([]);
 
@@ -52,13 +52,15 @@ const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
   useEffect(() => {
     if (problem) {
       setCode(
-        problem.codeSnippets?.[selectedLanguage.toLowerCase()] || submission?.sourceCode || ""
+        problem.codeSnippets?.[selectedLanguage.toLowerCase()],
+        // submission?.sourceCode
+        //  ""
       );
       setTestCases(
         problem.testcases?.map((tc) => ({
           input: tc.input,
           output: tc.output,
-        })) || []
+        })) || [],
       );
     }
   }, [problem, selectedLanguage]);
@@ -77,24 +79,23 @@ const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
     setCode(problem.codeSnippets?.[lang] || "");
   };
 
-  //Piston type code runner 
- const handleRunCode = (e) => {
-  e.preventDefault();
+  //Piston type code runner
+  const handleRunCode = (e) => {
+    e.preventDefault();
 
-  try {
-    const stdin = problem.testcases.map((tc) => tc.input).join("\n");
+    try {
+      const stdin = problem.testcases.map((tc) => tc.input).join("\n");
 
-    executeCode({
-      languageKey: selectedLanguage,
-      sourceCode: code,
-      stdin,
-      problemId: id
-    });
-  } catch (error) {
-    console.error("Error executing code", error);
-  }
-};
-
+      executeCode({
+        languageKey: selectedLanguage,
+        sourceCode: code,
+        stdin,
+        problemId: id,
+      });
+    } catch (error) {
+      console.error("Error executing code", error);
+    }
+  };
 
   if (isProblemLoading || !problem) {
     return (
@@ -150,7 +151,7 @@ const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
                         </div>
                       )}
                     </div>
-                  )
+                  ),
                 )}
               </>
             )}
@@ -318,7 +319,11 @@ const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
                   language={selectedLanguage.toLowerCase()}
                   theme="vs-dark"
                   value={code}
-                  onChange={(value) => setCode(value || "")}
+                  onChange={(value) => {
+                    if (value !== undefined) {
+                      setCode(value);
+                    }
+                  }}
                   options={{
                     minimap: { enabled: true },
                     fontSize: 20,

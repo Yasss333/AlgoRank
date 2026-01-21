@@ -86,11 +86,12 @@ export const submissionCountHandler =async (req, res)=>{
                     userID
                 }
             })
-            if(!submission){
-                res.status(400).json({
-                    message:"No Submmison for this problem"
-                })
-            }
+            // removed becasue coutn returns a number ex:submission===0
+            // if(!submission){
+            //     res.status(400).json({
+            //         message:"No Submmison for this problem"
+            //     })
+            // }
             return res.status(200).json({
                 count:submission
             })
