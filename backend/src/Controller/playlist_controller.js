@@ -25,7 +25,7 @@ export const createPlaylist= async (req,res) => {
     
 }
 export const addProblemInPlaylist = async (req, res) => {
-  const { playlistId : playlistID } = req.params;
+  const {  playlistID } = req.params;
   const { problemIds: problemID } = req.body; // this is an ARRAY of strings
   const userID = req.user.id;
 
@@ -57,7 +57,7 @@ export const addProblemInPlaylist = async (req, res) => {
 
     // 🔑 BULK INSERT (correct way)
     const data = problemID.map((pid) => ({
-      playlistID,
+       playlistID,
       problemID: pid,
     }));
 
