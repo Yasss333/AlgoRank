@@ -15,25 +15,14 @@ const app = express();
 
 
 app.use(cors({
-  origin: (origin, callback) => {
-    // allow server-to-server & curl/postman
-    if (!origin) return callback(null, true);
-
-    // allow all Vercel preview + prod URLs
-    if (
-      origin.startsWith("http://localhost:5173") ||
-      origin.endsWith(".vercel.app")
-    ) {
-      return callback(null, true);
-    }
-
-    return callback(new Error("CORS not allowed"), false);
-  },
+  origin: [
+    "http://localhost:5173",
+    "https://algo-rank-333.vercel.app"
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
-app.options("*", cors());
 
 // IMPORTANT: handle preflight explicitly
 
