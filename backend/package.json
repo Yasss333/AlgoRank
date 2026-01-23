@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-"start": "prisma migrate deploy && node index.js"
+"start": "prisma migrate deploy && node src/index.js"
   },
   "author": "Yash M",
   "license": "ISC",
