@@ -14,15 +14,28 @@ dotenv.config();
 const app = express();
 
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://algo-rank-333.vercel.app",
+];
+
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://algo-rank-333.vercel.app"
-  ],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith(".vercel.app")
+    ) {
+      return callback(null, true);
+    }
+
+    return callback(null, false);
+  },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
 }));
+
+app.options("*", cors());
 
 // IMPORTANT: handle preflight explicitly
 
