@@ -127,6 +127,13 @@ const userLogoutHandler = async (req, res) => {
 };
 const userCheckHandler = async (req, res) => {
   console.log("Ho gaya check bhai ");
+    if (!req.user) {
+    return res.status(200).json({
+      success: true,
+      message: "User not logged in",
+      user: null,
+    });
+  }
   const user= await db.user.findUnique({
     where:{
       id:req.user.id
