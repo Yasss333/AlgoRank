@@ -18,7 +18,7 @@ import cors from "cors";
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://algo-rank-333-5yeqhd5ke-yash-mandhares-projects.vercel.app"
+    "https://algo-rank-333.vercel.app"
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
