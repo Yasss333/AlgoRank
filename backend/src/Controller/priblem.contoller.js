@@ -78,35 +78,74 @@ const createProblemHandler = async (req, res) => {
 
 const getallProblemHandler = async (req, res) => {
   try {
-      const problems= await db.problem.findMany(
-        {
-          include:{
-            solvedBy:{
-              where:{
-                userID:req.user.id
-              }
-            }
+    if (!req.user) {
+      return res.status(401).json({
+        message: "Unauthorized"
+      });
+    }
+
+    const problems = await db.problem.findMany({
+      include: {
+        solvedBy: {
+          where: {
+            userID: req.user.id
           }
         }
-      );
-      if(!problems){
-        res.status(404).json({
-          error:"No Problems Found "
-        })
       }
-      res.status(200).json({
-        sucess:true,
-        message:"Problems Fecthed sucessfully",
-        problems
-      })
+    });
+
+    if (problems.length === 0) {
+      return res.status(404).json({
+        error: "No Problems Found"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Problems fetched successfully",
+      problems
+    });
   } catch (error) {
     console.log(error);
-       return res.status(500).json({
-      message: "Failed to Get All problems  Problem",
+    res.status(500).json({
+      message: "Failed to get problems",
       error: error.message
     });
   }
 };
+
+// const getallProblemHandler = async (req, res) => {
+//   try {
+//      const userId = req.user?.id;
+
+// const problems = await db.problem.findMany({
+//   include: {
+//     solvedBy: userId
+//       ? {
+//           where: { userID: userId }
+//         }
+//       : false
+//   }
+// });
+
+//       if(!problems){
+//         res.status(404).json({
+//           error:"No Problems Found "
+//         })
+//       }
+//       res.status(200).json({
+//         sucess:true,
+//         message:"Problems Fecthed sucessfully",
+//         problems
+//       })
+//   } catch (error) {
+//     console.log(error);
+//        return res.status(500).json({
+//       message: "Failed to Get All problems  Problem",
+//       error: error.message
+//     });
+//   }
+// };
 const getProblemByIDHandler = async (req, res) => {
   const {id}=req.params;
   try {
