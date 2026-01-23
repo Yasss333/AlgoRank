@@ -13,16 +13,20 @@ import playlistRoute from "../src/Routes/playlistRoute.js"
 dotenv.config();
 const app = express();
 
+import cors from "cors";
+
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://algo-rank-333-bbp41kfad-yash-mandhares-projects.vercel.app"
+    "https://algo-rank-333-5yeqhd5ke-yash-mandhares-projects.vercel.app"
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
+// IMPORTANT: handle preflight explicitly
+app.options("*", cors());
 
 app.use(cookieParser());
 app.use(express.json());

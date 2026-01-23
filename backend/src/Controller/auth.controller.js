@@ -38,7 +38,8 @@ const userRegisterHandler = async (req, res) => {
       
     res.cookie("jwt", token, {
       httpOnly: true,
-      sameSite: "strict",
+      // sameSite: "strict",
+      sameSite: "none",
       // secure: false, // true in production
       secure: true, // true in production
       maxAge: 7 * 24 * 60 * 60 * 1000,
