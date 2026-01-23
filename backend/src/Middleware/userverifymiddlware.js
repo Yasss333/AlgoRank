@@ -2,47 +2,93 @@
 import jwt from "jsonwebtoken";
 import { db } from "../libs/db.js";
 
+// export const verfiyJWT = async (req, res, next) => {
+//   const token = req.cookies.jwt;
+//   // console.log("Token : ", token);
+//     if (!token) {
+//     req.user = null;
+//     return next();
+//   }
+  
+//   let decoded;
+//   try {
+//     decoded = await jwt.verify(token , process.env.SECRET);
+//     if (!decoded) {
+//       res.status(400).json({
+//         message: "Wrong credentials",
+//       });
+//     }
+
+//     const user = await db.user.findUnique({
+//       where: {
+//         id: decoded.id,
+//       },
+//       select:{
+//         id:true,
+//         name:true,
+//         password:false,        
+//       }
+//     });
+//     if(!user){
+//         res.status(400).json({
+//           message: "Wrong credentials",
+//         });
+//     }
+//      req.user=user;
+//     next(); 
+//   } catch (error) {
+//     console.error(error);
+//       res.status(400).json({
+//         message: "JWT middlewared stopped teh execution ",error,
+//       });
+//   }
+// };
+
+//updated bexasue check ask for jwt before login 
 export const verfiyJWT = async (req, res, next) => {
   const token = req.cookies.jwt;
-  // console.log("Token : ", token);
-  let decoded;
+
+  // ✅ IMPORTANT: allow request to continue
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+
   try {
-    decoded = await jwt.verify(token , process.env.SECRET);
-    if (!decoded) {
-      res.status(400).json({
-        message: "Wrong credentials",
-      });
-    }
+    const decoded = jwt.verify(token, process.env.SECRET);
 
     const user = await db.user.findUnique({
-      where: {
-        id: decoded.id,
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        name: true,
+        role: true,
       },
-      select:{
-        id:true,
-        name:true,
-        password:false,        
-      }
     });
-    if(!user){
-        res.status(400).json({
-          message: "Wrong credentials",
-        });
+
+    if (!user) {
+      req.user = null;
+      return next();
     }
-     req.user=user;
-    next(); 
+
+    req.user = user;
+    next();
   } catch (error) {
-    console.error(error);
-      res.status(400).json({
-        message: "JWT middlewared stopped teh execution ",error,
-      });
+    console.error("JWT error:", error.message);
+
+    // ✅ DO NOT RESPOND
+    req.user = null;
+    next();
   }
 };
 
 
 export const validateAdmin=(async(req,res,next)=>{
+      if (!req.user) {
+    return res.status(401).json({ message: "Not authenticated" });
+     }
        const userID=req.user.id;
-       console.log(userID);
+      //  console.log(userID);
       try {
          const user=await db.user.findUnique({
           where:{
