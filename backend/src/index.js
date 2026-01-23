@@ -14,13 +14,15 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin:"http://localhost:5173",
-  // origin:"*",
-  //for everone acces set as "*"
-  credentials:true,
+  origin: [
+    "http://localhost:5173",
+    "https://algo-rank-333-bbp41kfad-yash-mandhares-projects.vercel.app"
+  ],
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-}))
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
 
 app.use(cookieParser());
 app.use(express.json());
