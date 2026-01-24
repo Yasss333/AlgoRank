@@ -110,12 +110,15 @@ The result is a functional platform where users can solve DSA problems, track pr
 ## ✨ Current Features
 
 ### **Problem Solving**
-- ✅ Browse Many  DSA problems
+- ✅ Browse 30+ carefully curated DSA problems
 - ✅ Filter by difficulty (Easy, Medium, Hard)
 - ✅ Filter by topic (Arrays, Strings, Trees, etc.)
+- ✅ Filter by company (Amazon, Google, Microsoft, Meta, Apple)
+- ✅ Search problems by keyword
 - ✅ Real-time code execution in browser
-- ✅ Multi-language support (JavaScript, Python, Java)
+- ✅ Multi-language support (JavaScript, Python, Java, C++, etc.)
 - ✅ View submission history with detailed results
+- ✅ Company-specific problem collections
 
 ### **User System**
 - ✅ Secure authentication with JWT
@@ -123,20 +126,67 @@ The result is a functional platform where users can solve DSA problems, track pr
 - ✅ Monthly problem-solving contribution graph
 - ✅ Track problems solved count
 - ✅ Track submission count
+- ✅ Admin role for creating problems
 
 ### **Problem Organization**
 - ✅ Create custom playlists
 - ✅ Add/remove problems from playlists
 - ✅ Organize learning journey
 - ✅ Quick access to grouped problems
+- ✅ Tag-based problem discovery
 
 ### **User Interface**
 - ✅ Responsive design (mobile, tablet, desktop)
-- ✅ Dark/Light mode support (DaisyUI themes) ..upcoming feature
+- ✅ Dark/Light mode support (DaisyUI themes)
 - ✅ Monaco Editor for professional code writing
 - ✅ Real-time test case results
 - ✅ Loading states and error handling
 - ✅ Beautiful animations and transitions
+- ✅ Tag cloud for easy filtering
+
+---
+
+## 📚 Database Seeding
+
+AlgoRank comes with a database seeding script that populates your database with 30+ quality DSA problems from top companies.
+
+### **Quick Start**
+```bash
+cd backend
+npm run seed
+```
+
+### **What Gets Seeded**
+- **30 DSA Problems** across Easy, Medium, and Hard difficulty levels
+- **25 Unique Tags** including company names, topic names, and difficulty levels
+- **Multiple Code Templates** (JavaScript, Python, Java) for each problem
+- **Test Cases** (2-3 per problem) for validation
+- **Admin User** for problem creation
+
+### **Companies Covered**
+- Amazon (8 problems)
+- Google (3 problems)
+- Microsoft (2 problems)
+- Meta (2 problems)
+- Apple (3 problems)
+
+### **API Endpoints for Filtering**
+```bash
+# Get all available tags
+GET /api/problems/tags
+
+# Filter problems by tags, difficulty, and search
+GET /api/problems/filter?tags=Amazon&difficulty=EASY
+
+# Search specific problems
+GET /api/problems/filter?search=two%20sum
+```
+
+### **Documentation**
+- [QUICK_START_SEED.md](./QUICK_START_SEED.md) - 2-minute quick start
+- [SEEDING_GUIDE.md](./SEEDING_GUIDE.md) - Complete seeding guide
+- [FRONTEND_INTEGRATION_GUIDE.md](./FRONTEND_INTEGRATION_GUIDE.md) - React code examples
+- [DATABASE_SEEDING_COMPLETE.md](./DATABASE_SEEDING_COMPLETE.md) - Full overview
 
 ---
 

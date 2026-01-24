@@ -399,3 +399,108 @@ export {
 //     });
 //   }
 // };
+
+// Get problems by tags and filters
+export const getProblemsByTags = async (req, res) => {
+  try {
+    const { tags, difficulty, search } = req.query;
+    const userId = req.user?.id;
+
+    // Build filter object
+    const where = {};
+
+    // Filter by difficulty
+    if (difficulty) {
+      where.difficulty = difficulty.toUpperCase();
+    }
+
+    // Filter by tags (match any tag)
+    if (tags) {
+      const tagArray = tags.split(",").map(tag => tag.trim());
+      where.tags = {
+        hasSome: tagArray
+      };
+    }
+
+    // Filter by search term in title or description
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } }
+      ];
+    }
+
+    const problems = await db.problem.findMany({
+      where,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        difficulty: true,
+        tags: true,
+        createdAt: true,
+        solvedBy: userId ? {
+          where: { userID: userId },
+          select: { id: true }
+        } : false
+      },
+      orderBy: { createdAt: "desc" }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Problems fetched successfully",
+      count: problems.length,
+      problems: problems.map(p => ({
+        ...p,
+        isSolved: p.solvedBy?.length > 0 || false,
+        solvedBy: undefined
+      }))
+    });
+  } catch (error) {
+    console.error("Error fetching problems by tags:", error);
+    res.status(500).json({
+      message: "Failed to fetch problems",
+      error: error.message
+    });
+  }
+};
+
+// Get all unique tags
+export const getAllTags = async (req, res) => {
+  try {
+    const problems = await db.problem.findMany({
+      select: { tags: true }
+    });
+
+    const uniqueTags = new Set();
+    problems.forEach(p => {
+      p.tags?.forEach(tag => uniqueTags.add(tag));
+    });
+
+    const tagStats = {};
+    problems.forEach(p => {
+      p.tags?.forEach(tag => {
+        tagStats[tag] = (tagStats[tag] || 0) + 1;
+      });
+    });
+
+    const tags = Array.from(uniqueTags).sort().map(tag => ({
+      name: tag,
+      count: tagStats[tag]
+    }));
+
+    res.status(200).json({
+      success: true,
+      message: "Tags fetched successfully",
+      tags,
+      totalTags: tags.length
+    });
+  } catch (error) {
+    console.error("Error fetching tags:", error);
+    res.status(500).json({
+      message: "Failed to fetch tags",
+      error: error.message
+    });
+  }
+};
