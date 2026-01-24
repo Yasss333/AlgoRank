@@ -26,19 +26,22 @@ export const useSubmissionStore = create((set, get) => ({
 
   getSubmissionForProblem: async (problemId) => {
     try {
+      set({ isLoading: true });
       const res = await api.get(
         `/submission/get-submissions/${problemId}`
       );
 
-      set({ submission: res.data.submissions });
-
-      
+      // Set both submission (singular) and submissions (plural) for compatibility
+      const submissionsData = res.data.submissions || [];
+      set({ 
+        submission: submissionsData.length > 0 ? submissionsData[0] : null,
+        submissions: submissionsData 
+      });
 
     } catch (error) {
       console.log("Error getting submissions for problem", error);
-
       toast.error("Error getting submissions for problem");
-      
+      set({ submissions: [], submission: null });
     } finally {
       set({ isLoading: false });
     }

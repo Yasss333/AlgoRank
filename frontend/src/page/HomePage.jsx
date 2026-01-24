@@ -11,6 +11,11 @@ const HomePage = () => {
     getAllProblems();
   }, [getAllProblems]);
 
+  useEffect(() => {
+    console.log("Problems in store:", problems);
+    console.log("Problems length:", problems?.length);
+  }, [problems]);
+
   if(isProblemsLoading){
     return (
       <div className="flex items-center justify-center h-screen">

@@ -29,7 +29,7 @@ const ProblemPage = () => {
   const { getProblemById, problem, isProblemLoading } = useProblemStore();
 
   const {
-    submission: submissions,
+    submissions,
     isLoading: isSubmissionsLoading,
     getSubmissionForProblem,
     getSubmissionCountForProblem,
@@ -50,12 +50,35 @@ const ProblemPage = () => {
   }, [id]);
 
   useEffect(() => {
-    if (problem) {
-      setCode(
-        problem.codeSnippets?.[selectedLanguage.toLowerCase()],
-        // submission?.sourceCode
-        //  ""
-      );
+    if (problem && problem.codeSnippets) {
+      // Initialize code with JavaScript snippet by default
+      const langKey = selectedLanguage.toUpperCase();
+      
+      // Try multiple key formats to find the code snippet
+      let codeSnippet = "";
+      if (problem.codeSnippets[langKey]) {
+        codeSnippet = problem.codeSnippets[langKey];
+      } else if (problem.codeSnippets[selectedLanguage]) {
+        codeSnippet = problem.codeSnippets[selectedLanguage];
+      } else if (problem.codeSnippets.JAVASCRIPT) {
+        codeSnippet = problem.codeSnippets.JAVASCRIPT;
+      } else if (problem.codeSnippets.PYTHON) {
+        codeSnippet = problem.codeSnippets.PYTHON;
+      } else if (problem.codeSnippets.JAVA) {
+        codeSnippet = problem.codeSnippets.JAVA;
+      } else {
+        // Get first available code snippet
+        const firstKey = Object.keys(problem.codeSnippets)[0];
+        if (firstKey) {
+          codeSnippet = problem.codeSnippets[firstKey];
+        }
+      }
+      
+      // Only update if we have a code snippet or if code is empty
+      if (codeSnippet || !code) {
+        setCode(codeSnippet);
+      }
+      
       setTestCases(
         problem.testcases?.map((tc) => ({
           input: tc.input,
@@ -69,14 +92,18 @@ const ProblemPage = () => {
     if (activeTab === "submissions" && id) {
       getSubmissionForProblem(id);
     }
-  }, [activeTab, id]);
+  }, [activeTab, id, getSubmissionForProblem]);
 
   console.log("submission", submissions);
 
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setSelectedLanguage(lang);
-    setCode(problem.codeSnippets?.[lang] || "");
+    const langKey = lang.toUpperCase();
+    const codeSnippet = problem?.codeSnippets?.[langKey] || 
+                         problem?.codeSnippets?.[lang] ||
+                         "";
+    setCode(codeSnippet);
   };
 
   //Piston type code runner
@@ -170,10 +197,18 @@ const ProblemPage = () => {
         );
       case "submissions":
         return (
-          <SubmissionsList
-            submissions={submissions}
-            isLoading={isSubmissionsLoading}
-          />
+          <div>
+            <SubmissionsList
+              submissions={submissions}
+              isLoading={isSubmissionsLoading}
+            />
+            {!isSubmissionsLoading && (!submissions || submissions.length === 0) && (
+              <div className="text-center p-8 text-base-content/70">
+                <p className="text-lg mb-2">No submissions found</p>
+                <p className="text-sm">Submit your solution to see your submissions here</p>
+              </div>
+            )}
+          </div>
         );
       case "discussion":
         return (
@@ -360,29 +395,83 @@ const ProblemPage = () => {
         <div className="card bg-base-100 shadow-xl mt-6">
           <div className="card-body">
             {submission ? (
-              <Submission submission={submission} />
+              <div className="space-y-6">
+                <Submission submission={submission} />
+                
+                {/* Enhanced Test Cases Display */}
+                <div className="divider"></div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold flex items-center gap-2">
+                    <Terminal className="w-5 h-5" />
+                    Test Cases
+                  </h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {testcases.map((testCase, index) => (
+                    <div key={index} className="card bg-base-200 shadow-md">
+                      <div className="card-body p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="badge badge-primary badge-sm">Test Case {index + 1}</span>
+                        </div>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-sm font-semibold text-base-content/70 mb-1 block">
+                              Input:
+                            </label>
+                            <div className="bg-base-300 p-3 rounded-lg font-mono text-sm break-all">
+                              {testCase.input || "N/A"}
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-sm font-semibold text-base-content/70 mb-1 block">
+                              Expected Output:
+                            </label>
+                            <div className="bg-base-300 p-3 rounded-lg font-mono text-sm break-all">
+                              {testCase.output || "N/A"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             ) : (
               <>
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold">Test Cases</h3>
+                  <h3 className="text-xl font-bold flex items-center gap-2">
+                    <Terminal className="w-5 h-5" />
+                    Test Cases
+                  </h3>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="table table-zebra w-full">
-                    <thead>
-                      <tr>
-                        <th>Input</th>
-                        <th>Expected Output</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {testcases.map((testCase, index) => (
-                        <tr key={index}>
-                          <td className="font-mono">{testCase.input}</td>
-                          <td className="font-mono">{testCase.output}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {testcases.map((testCase, index) => (
+                    <div key={index} className="card bg-base-200 shadow-md hover:shadow-lg transition-shadow">
+                      <div className="card-body p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="badge badge-primary badge-sm">Test Case {index + 1}</span>
+                        </div>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-sm font-semibold text-base-content/70 mb-1 block">
+                              Input:
+                            </label>
+                            <div className="bg-base-300 p-3 rounded-lg font-mono text-sm break-all border border-base-content/10">
+                              {testCase.input || "N/A"}
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-sm font-semibold text-base-content/70 mb-1 block">
+                              Expected Output:
+                            </label>
+                            <div className="bg-base-300 p-3 rounded-lg font-mono text-sm break-all border border-base-content/10">
+                              {testCase.output || "N/A"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </>
             )}

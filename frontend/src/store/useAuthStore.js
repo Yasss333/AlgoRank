@@ -28,6 +28,11 @@ export const useAuthStore = create((set) => ({
     try {
       const res = await api.post("/auth/register", data);
 
+      // Save token to localStorage if provided
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+      }
+
       set({ authUser: res.data.user.role });
 
       toast.success(res.data.message);
@@ -44,6 +49,11 @@ export const useAuthStore = create((set) => ({
     try {
       const res = await api.post("/auth/login", data);
 
+      // Save token to localStorage if provided
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+      }
+
       set({ authUser: res.data.user });
 
       toast.success(res.data.message);
@@ -58,6 +68,7 @@ export const useAuthStore = create((set) => ({
   logout: async () => {
     try {
       await api.post("/auth/logout");
+      localStorage.removeItem("token"); // Remove token from localStorage
       set({ authUser: null });
 
       toast.success("Logout successful");

@@ -54,6 +54,7 @@ const userRegisterHandler = async (req, res) => {
         role: user.role,
         image: user.image,
       },
+      token: token, // Also send token in response body for frontend to save
     });
   } catch (error) {
     console.error("Creating User :", error);
@@ -101,6 +102,7 @@ const userLoginHandler = async (req, res) => {
         role: user.role,
         image: user.image,
       },
+      token: token, // Also send token in response body for frontend to save
     });
   } catch (error) {}
 };

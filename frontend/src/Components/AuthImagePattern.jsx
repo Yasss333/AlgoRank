@@ -67,7 +67,7 @@
     }, [codeSnippets.length])
 
     return (
-        <div className="hidden lg:flex flex-col items-center justify-center bg-slate-900 text-white p-12 relative overflow-hidden">
+        <div className="hidden lg:flex flex-col items-center justify-center bg-slate-900 text-white p-12 relative overflow-hidden min-h-screen">
         {/* Animated code symbols in background */}
         <div className="absolute inset-0 opacity-10">
             <div className="absolute top-[10%] left-[15%] animate-pulse">
@@ -90,9 +90,9 @@
             </div>
         </div>
 
-        <div className="z-10 max-w-md flex flex-col items-center">
+        <div className="z-10 max-w-md flex flex-col items-center w-full">
             {/* Code editor mockup */}
-            <div className="w-full bg-slate-800 rounded-lg shadow-xl mb-8 overflow-hidden">
+            <div className="w-full bg-slate-800 rounded-lg shadow-xl mb-8 overflow-hidden flex-shrink-0">
             {/* Editor header */}
             <div className="bg-slate-700 px-4 py-2 flex items-center">
                 <div className="flex space-x-2 mr-4">
@@ -104,13 +104,13 @@
             </div>
 
             {/* Code content */}
-            <div className="p-4 font-mono text-xs sm:text-sm overflow-hidden relative h-64">
-                <pre className="whitespace-pre-wrap text-green-400 transition-opacity duration-1000">
+            <div className="p-4 font-mono text-xs sm:text-sm overflow-hidden relative h-64 min-h-[256px] max-h-[256px]">
+                <pre className="whitespace-pre-wrap text-green-400 transition-opacity duration-1000 absolute inset-0 p-4 overflow-auto">
                 {codeSnippets[activeIndex]}
                 </pre>
 
                 {/* Blinking cursor */}
-                <div className="absolute bottom-4 right-4 w-2 h-4 bg-white animate-blink"></div>
+                <div className="absolute bottom-4 right-4 w-2 h-4 bg-white animate-blink z-10"></div>
             </div>
             </div>
 

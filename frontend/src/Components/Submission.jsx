@@ -121,25 +121,56 @@ const SubmissionResults = ({ submission }) => {
           RUN CODE (PISTON)
       ---------------------------- */}
       {!hasTestCases && (
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title flex items-center gap-2">
-              <Terminal className="w-5 h-5" />
-              Program Output
-            </h2>
-
-            <div className="bg-base-200 rounded-lg p-4 font-mono whitespace-pre-wrap">
-              {stdout || "No output"}
-            </div>
-
-            {stderr && (
-              <div className="mt-4">
-                <p className="text-error font-semibold">Error:</p>
-                <pre className="bg-error/10 p-3 rounded-lg text-error">
-                  {stderr}
-                </pre>
+        <div className="space-y-4">
+          {/* Exit Code Status */}
+          {submission.exitCode !== undefined && (
+            <div className="card bg-base-200 shadow-lg">
+              <div className="card-body p-4">
+                <div className="flex items-center gap-2">
+                  {submission.exitCode === 0 ? (
+                    <>
+                      <CheckCircle2 className="w-5 h-5 text-success" />
+                      <span className="font-semibold text-success">Program executed successfully</span>
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="w-5 h-5 text-error" />
+                      <span className="font-semibold text-error">Program exited with code {submission.exitCode}</span>
+                    </>
+                  )}
+                </div>
               </div>
-            )}
+            </div>
+          )}
+
+          {/* Output */}
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body">
+              <h2 className="card-title flex items-center gap-2 mb-4">
+                <Terminal className="w-5 h-5" />
+                Program Output
+              </h2>
+
+              {stdout ? (
+                <div className="bg-base-200 rounded-lg p-4 font-mono whitespace-pre-wrap text-sm border border-base-content/10">
+                  <div className="text-xs text-base-content/50 mb-2 font-semibold">STDOUT:</div>
+                  <div className="text-base-content">{stdout}</div>
+                </div>
+              ) : (
+                <div className="bg-base-200 rounded-lg p-4 font-mono text-sm text-base-content/50 italic border border-base-content/10">
+                  No output
+                </div>
+              )}
+
+              {stderr && (
+                <div className="mt-4">
+                  <div className="text-xs text-error mb-2 font-semibold">STDERR:</div>
+                  <div className="bg-error/10 border border-error/20 rounded-lg p-4 font-mono text-sm text-error whitespace-pre-wrap">
+                    {stderr}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

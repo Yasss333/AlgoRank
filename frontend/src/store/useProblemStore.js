@@ -15,11 +15,18 @@ export const useProblemStore=create((set)=>({
             set({isProblemsLoading:true})
             
             const res= await api.get("/problems/get-all-problems");
+            console.log("API Response:", res.data);
             
-            set({problems:res.data.problems})
+            if (res.data && res.data.problems) {
+                set({problems:res.data.problems})
+            } else {
+                console.error("Unexpected response structure:", res.data);
+                set({problems:[]})
+            }
         } catch (error) {
             console.log("Error getting all problems ", error);
             toast.error("Failed Getting ALl problems")
+            set({problems:[]})
         }
         finally{
             set({isProblemsLoading:false})
