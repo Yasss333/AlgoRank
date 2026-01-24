@@ -2,7 +2,7 @@
 
 A full-stack DSA (Data Structures & Algorithms) problem-solving platform inspired by LeetCode and Striver's TUF+ platform. Built as a production-style learning project to understand modern full-stack development: from frontend UI frameworks to backend APIs, database design, authentication, and deployment.
 
-**Live Demo:** [AlgoRank](https://algorank.vercel.app) | **Backend API:** [Railway](https://algorank-api.railway.app)
+**Live Demo:** [AlgoRank](https://algo-rank-333.vercel.app/) | **Backend API:** [Railway](algorank-production.up.railway.app)
 
 ---
 
