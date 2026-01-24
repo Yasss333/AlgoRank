@@ -746,10 +746,10 @@ async function main() {
       update: {},
       create: {
         email: "admin@algorank.com",
-        name: "Recruiter Demo",
+        name: "Admin Demo",
         password: hashedPassword,
         role: "ADMIN",
-        image: "https://api.dicebear.com/7.x/avataaars/svg?seed=RecruiterDemo"
+        image: "https://randomuser.me/api/portraits/lego/1.jpg"
       },
     });
 
