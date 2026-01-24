@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { axiosInstance } from "../lib/axios";
+import api from "../lib/axios";
 import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
@@ -11,7 +11,7 @@ export const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isCheckingAuth: true });
     try {
-      const res = await axiosInstance.get("/auth/check");
+      const res = await api.get("/auth/check");
       console.log("checkauth response", res.data);
 
       set({ authUser: res.data.user });
@@ -26,7 +26,7 @@ export const useAuthStore = create((set) => ({
   signup: async (data) => {
     set({ isSigningUp: true });
     try {
-      const res = await axiosInstance.post("/auth/register", data);
+      const res = await api.post("/auth/register", data);
 
       set({ authUser: res.data.user.role });
 
@@ -42,7 +42,7 @@ export const useAuthStore = create((set) => ({
   login: async (data) => {
     set({ isLoggingIn: true });
     try {
-      const res = await axiosInstance.post("/auth/login", data);
+      const res = await api.post("/auth/login", data);
 
       set({ authUser: res.data.user });
 
@@ -57,7 +57,7 @@ export const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await axiosInstance.post("/auth/logout");
+      await api.post("/auth/logout");
       set({ authUser: null });
 
       toast.success("Logout successful");

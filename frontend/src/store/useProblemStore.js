@@ -1,8 +1,7 @@
 import {create }  from "zustand";
-import { axiosInstance } from "../lib/axios";
+import api from "../lib/axios";
 import {toast} from "react-hot-toast";
 import { get } from "react-hook-form";
-// import axios from "axios";
 
 export const useProblemStore=create((set)=>({
     problem:null,
@@ -15,7 +14,7 @@ export const useProblemStore=create((set)=>({
         try {
             set({isProblemsLoading:true})
             
-            const res= await axiosInstance.get("/problems/get-all-problems");
+            const res= await api.get("/problems/get-all-problems");
             
             set({problems:res.data.problems})
         } catch (error) {
@@ -30,7 +29,7 @@ export const useProblemStore=create((set)=>({
     getProblemById:async(id)=>{
         try {
             set({isProblemLoading:true})
-            const res=await axiosInstance.get(`/problems/get-problem/${id}`)
+            const res=await api.get(`/problems/get-problem/${id}`)
             set({problem:res.data.problem});
             toast.success("Success in getting the problem ")
         } catch (error) {
@@ -44,7 +43,7 @@ export const useProblemStore=create((set)=>({
     getSolvedProblemByUser:async()=>{
         try {
             set({isProblemsLoading:true})
-            const res=await axiosInstance.get("/problems/get-solved-problem");
+            const res=await api.get("/problems/get-solved-problem");
             set({problems:res.data.problems})
         } catch (error) {
             console.log("Error in loading the problems solved by the user ", error);

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { axiosInstance } from "../lib/axios";
+import api from "../lib/axios";
 import toast from "react-hot-toast";
 
 export const useExecutionStore = create((set) => ({
@@ -17,7 +17,7 @@ executeCode: async ({ sourceCode, languageKey, stdin }) => {
 
     set({ isExecuting: true });
 
-    const res = await axiosInstance.post("/execute-route/", {
+    const res = await api.post("/execute-route/", {
       sourceCode,
       languageKey,
       stdin,
