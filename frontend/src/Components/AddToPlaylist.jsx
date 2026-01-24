@@ -4,7 +4,7 @@ import { usePlaylistStore } from '../store/usePlaylistStore';
 
 const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
   const { playlists, getAllPlaylists, addProblemToPlaylist, isLoading } = usePlaylistStore();
-  const [selectedPlaylist, setSelectedPlaylist] = useState('');
+  const [selectedPlaylistId, setSelectedPlaylistId] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -14,9 +14,10 @@ const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedPlaylist) return;
+    if (!selectedPlaylistId) return;
 
-    await addProblemToPlaylist(selectedPlaylist, [problemId]);
+    await addProblemToPlaylist(selectedPlaylistId, [problemId]);
+    setSelectedPlaylistId('');
     onClose();
   };
 
@@ -39,13 +40,13 @@ const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
             </label>
             <select
               className="select select-bordered w-full"
-              value={selectedPlaylist}
-              onChange={(e) => setSelectedPlaylist(e.target.value)}
+              value={selectedPlaylistId}
+              onChange={(e) => setSelectedPlaylistId(e.target.value)}
               disabled={isLoading}
             >
               <option value="">Select a playlist</option>
               {playlists.map((playlist) => (
-                <option key={playlist.id} value={playlist.title}>
+                <option key={playlist.id} value={playlist.id}>
                   {playlist.title}
                 </option>
               ))}
@@ -59,7 +60,7 @@ const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
             <button 
               type="submit" 
               className="btn btn-primary"
-              disabled={!selectedPlaylist || isLoading}
+              disabled={!selectedPlaylistId || isLoading}
             >
               {isLoading ? <Loader className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
               Add to Playlist

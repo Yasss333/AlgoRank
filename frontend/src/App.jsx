@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
+import LandingPage from "./page/LandingPage";
 import HomePage from "./page/HomePage";
 import LoginPage from "./page/LoginPage";
 import SignUpPage from "./page/SignUpPage";
@@ -30,7 +31,7 @@ const App = () => {
       <div className="flex flex-col items-center justify-start">
         <Toaster />
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route path="/" element={authUser ? <Layout /> : <LandingPage />}>
             <Route
               index
               element={authUser ? <HomePage /> : <Navigate to={"/login"} />}

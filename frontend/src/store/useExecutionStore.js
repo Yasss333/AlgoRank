@@ -31,6 +31,40 @@ executeCode: async ({ sourceCode, languageKey, stdin }) => {
   } finally {
     set({ isExecuting: false });
   }
+},
+
+// Submit code to database
+submitCode: async ({ sourceCode, languageKey, stdin, problemId, expectedOutputs }) => {
+  try {
+    console.log("SUBMIT PAYLOAD:", {
+      sourceCode,
+      languageKey,
+      stdin,
+      problemId,
+      expectedOutputs,
+    });
+
+    set({ isExecuting: true });
+
+    const res = await api.post("/execute-route/submit", {
+      sourceCode,
+      languageKey,
+      stdin,
+      problemId,
+      expectedOutputs,
+    });
+
+    set({ submission: res.data.submission });
+    toast.success(res.data.message || "Code submitted successfully");
+    
+    return res.data.submission;
+  } catch (error) {
+    console.error("Error submitting code", error);
+    toast.error("Error submitting code");
+    throw error;
+  } finally {
+    set({ isExecuting: false });
+  }
 }
 
 //modefied submission code 

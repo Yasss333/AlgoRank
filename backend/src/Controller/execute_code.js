@@ -34,6 +34,108 @@ export const executionRouter = async (req, res) => {
   }
 };
 
+// Submit code and save to database
+export const submitCodeHandler = async (req, res) => {
+  const { sourceCode, languageKey, stdin, problemId, expectedOutputs } = req.body;
+  const userID = req.user.id;
+
+  console.log("SUBMIT REQ.BODY:", req.body);
+  console.log("SUBMIT REQ.USER:", req.user);
+
+  try {
+    if (!sourceCode || !languageKey || !problemId) {
+      return res.status(400).json({
+        message: "Missing source code, language, or problemId",
+      });
+    }
+
+    // Run code against testcases
+    const stdinArray = stdin ? stdin.split("\n") : [];
+    let allPassed = true;
+    let memory = [];
+    let time = [];
+    let testCaseResults = [];
+
+    for (let i = 0; i < stdinArray.length; i++) {
+      const result = await runCodeWithPiston({
+        language: languageKey,
+        sourceCode,
+        stdin: stdinArray[i],
+      });
+
+      const passed = result.stdout?.trim() === (expectedOutputs?.[i]?.trim() || "");
+      
+      testCaseResults.push({
+        testCase: i + 1,
+        passed,
+        stdout: result.stdout || "",
+        expected: expectedOutputs?.[i] || "",
+        stderr: result.stderr || "",
+        status: result.status?.description || "Executed",
+        memory: result.memory || "",
+        time: result.time || "",
+      });
+
+      if (result.memory) memory.push(result.memory);
+      if (result.time) time.push(result.time);
+      if (!passed) allPassed = false;
+    }
+
+    // Create submission in database
+    const submission = await db.submission.create({
+      data: {
+        userID,
+        problemID: problemId,
+        sourceCode,
+        language: languageKey,
+        stdin: stdin || "",
+        stdout: JSON.stringify(testCaseResults.map(r => r.stdout)),
+        stderr: testCaseResults.some(r => r.stderr) 
+          ? JSON.stringify(testCaseResults.map(r => r.stderr))
+          : null,
+        status: allPassed ? "Accepted" : "Wrong Answer",
+        memory: memory.length > 0 ? JSON.stringify(memory) : "[]",
+        time: time.length > 0 ? JSON.stringify(time) : "[]",
+      },
+    });
+
+    // Mark problem as solved if all tests passed
+    if (allPassed) {
+      await db.problemSolved.upsert({
+        where: {
+          userID_problemID: {
+            userID,
+            problemID: problemId,
+          },
+        },
+        update: {},
+        create: {
+          userID,
+          problemID: problemId,
+        },
+      });
+    }
+
+    // Get the created submission with any related data
+    const finalSubmission = await db.submission.findUnique({
+      where: { id: submission.id },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Code submitted successfully",
+      submission: finalSubmission,
+      testCaseResults,
+    });
+  } catch (error) {
+    console.error("Submit error:", error);
+    return res.status(500).json({
+      message: "Submission failed",
+      error: error.message,
+    });
+  }
+};
+
 
 
 // export const executionRouter = async (req, res) => {

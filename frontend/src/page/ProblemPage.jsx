@@ -42,7 +42,7 @@ const ProblemPage = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testcases, setTestCases] = useState([]);
 
-  const { executeCode, submission, isExecuting } = useExecutionStore();
+  const { executeCode, submission, isExecuting, submitCode } = useExecutionStore();
 
   useEffect(() => {
     getProblemById(id);
@@ -121,6 +121,33 @@ const ProblemPage = () => {
       });
     } catch (error) {
       console.error("Error executing code", error);
+    }
+  };
+
+  // Submit code handler
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const stdin = problem.testcases.map((tc) => tc.input).join("\n");
+      const expectedOutputs = problem.testcases.map((tc) => tc.output);
+
+      await submitCode({
+        languageKey: selectedLanguage,
+        sourceCode: code,
+        stdin,
+        problemId: id,
+        expectedOutputs,
+      });
+
+      // Refresh submissions after successful submit
+      await getSubmissionForProblem(id);
+      await getSubmissionCountForProblem(id);
+      
+      // Switch to submissions tab to show the new submission
+      setActiveTab("submissions");
+    } catch (error) {
+      console.error("Error submitting code", error);
     }
   };
 
@@ -383,7 +410,13 @@ const ProblemPage = () => {
                     {!isExecuting && <Play className="w-4 h-4" />}
                     Run Code(DRY run)
                   </button>
-                  <button className="btn btn-success gap-2">
+                  <button 
+                    className={`btn btn-success gap-2 ${
+                      isExecuting ? "loading" : ""
+                    }`}
+                    onClick={handleSubmit}
+                    disabled={isExecuting}
+                  >
                     Submit Solution
                   </button>
                 </div>

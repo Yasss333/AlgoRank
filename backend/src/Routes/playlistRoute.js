@@ -10,7 +10,7 @@ router.post("/:playlistID/add-problem", verfiyJWT, addProblemInPlaylist)
 router.get("/", verfiyJWT, getallproblemsfromPlaylist )
 router.get("/:playlistID", verfiyJWT, getplaylistdetailsByPlaylistID)
 router.delete("/:playlistID", verfiyJWT, deletePlaylist)
-router.delete("/:playlistID/remove-problem", verfiyJWT, removeProblemFromPlaylist)
+router.post("/:playlistID/remove-problems", verfiyJWT, removeProblemFromPlaylist)
 
 export default router;
 
