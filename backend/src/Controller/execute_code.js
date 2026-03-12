@@ -1,4 +1,4 @@
-import { runCodeWithPiston } from "../libs/pistonlibs.js";
+import { runCodeWithPiston, safeRunCodeWithPiston } from "../libs/pistonlibs.js";
 import { db } from "../libs/db.js";
 
 
@@ -60,11 +60,18 @@ export const submitCodeHandler = async (req, res) => {
     let testCaseResults = [];
 
     for (let i = 0; i < stdinArray.length; i++) {
-      const result = await runCodeWithPiston({
-        language: languageKey,
-        sourceCode,
-        stdin: stdinArray[i],
-      });
+      let result;
+      try {
+        // Prefer safe wrapper which surfaces upstream status
+        result = await safeRunCodeWithPiston({
+          language: languageKey,
+          sourceCode,
+          stdin: stdinArray[i],
+        });
+      } catch (execErr) {
+        console.error("Execution error on testcase", i + 1, execErr.message || execErr);
+        return res.status(execErr.status || 502).json({ message: "Execution service error", error: execErr.message || String(execErr) });
+      }
 
       const passed = result.stdout?.trim() === (expectedOutputs?.[i]?.trim() || "");
       
@@ -132,9 +139,11 @@ export const submitCodeHandler = async (req, res) => {
     });
   } catch (error) {
     console.error("Submit error:", error);
-    return res.status(500).json({
+    // If it's an axios-like error propagated earlier, include details
+    const status = error.status || 500;
+    return res.status(status).json({
       message: "Submission failed",
-      error: error.message,
+      error: error.message || String(error),
     });
   }
 };

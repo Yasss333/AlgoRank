@@ -31,6 +31,25 @@ export const runCodeWithPiston = async ({
   };
 };
 
+// Improved error handling: surface upstream errors clearly
+export const safeRunCodeWithPiston = async (opts) => {
+  try {
+    return await runCodeWithPiston(opts);
+  } catch (err) {
+    if (err.response) {
+      // Axios error with response from Piston
+      const status = err.response.status;
+      const body = err.response.data || err.response.statusText;
+      const msg = `Piston API responded ${status}: ${JSON.stringify(body)}`;
+      const e = new Error(msg);
+      e.status = status;
+      throw e;
+    }
+
+    throw err;
+  }
+};
+
 
 // FOR JUDGE0 NEEDED
 // export function getLangaugeName(langauge_id){
