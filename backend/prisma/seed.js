@@ -787,6 +787,24 @@ async function main() {
     console.log("   📧 Email: admin@algorank.com");
     console.log("   🔑 Password: admin123");
 
+    // Create a recruiter demo account
+    const hashedRecruiter = await bcryptjs.hash("recruiter123", 12);
+    const recruiterUser = await prisma.user.upsert({
+      where: { email: "recruiter@algorank.com" },
+      update: {},
+      create: {
+        email: "recruiter@algorank.com",
+        name: "Recruiter Demo",
+        password: hashedRecruiter,
+        role: "USER",
+        image: "https://randomuser.me/api/portraits/lego/2.jpg",
+      },
+    });
+
+    console.log("✅ Recruiter demo account ready:");
+    console.log("   📧 Email: recruiter@algorank.com");
+    console.log("   🔑 Password: recruiter123");
+
     // Seed problems
     let createdCount = 0;
     let skippedCount = 0;
@@ -894,6 +912,67 @@ async function main() {
 
     console.log(`\n🏷️  Unique tags: ${uniqueTags.size}`);
     console.log("Tags:", Array.from(uniqueTags).sort().join(", "));
+
+    // Create a flagged sample problem with a ready solution and a recruiter submission
+    const flaggedTitle = "Flagged Sample Problem - Recruiter Submit";
+    let flagged = await prisma.problem.findFirst({ where: { title: flaggedTitle } });
+    if (!flagged) {
+      flagged = await prisma.problem.create({
+        data: {
+          title: flaggedTitle,
+          description: "This is a flagged sample problem prefilled for recruiters. Submit to mark as accepted.",
+          difficulty: "EASY",
+          tags: ["Sample", "Flagged", "Recruiter"],
+          examples: {
+            example1: { input: "1", output: "1", explanation: "Returns same number" },
+          },
+          constraints: "1 <= n <= 10",
+          testcases: [{ input: "1", output: "1" }],
+          codeSnippets: {
+            JAVASCRIPT: "function sample(n){ return n; }",
+            PYTHON: "def sample(n): return n",
+            JAVA: "public class Main { public static int sample(int n){ return n; } }",
+          },
+          refrenceSolutions: {
+            JAVASCRIPT: "function sample(n){ return n; }",
+            PYTHON: "def sample(n): return n",
+            JAVA: "public class Main { public static int sample(int n){ return n; } }",
+          },
+          userID: adminUser.id,
+        },
+      });
+
+      // create a submission by recruiter marked accepted
+      const recruiter = await prisma.user.findUnique({ where: { email: "recruiter@algorank.com" } });
+      if (recruiter) {
+        await prisma.submission.create({
+          data: {
+            userID: recruiter.id,
+            problemID: flagged.id,
+            sourceCode: flagged.refrenceSolutions?.JAVASCRIPT || "",
+            language: "JAVASCRIPT",
+            stdin: "1",
+            stdout: "1",
+            stderr: null,
+            status: "ACCEPTED",
+          },
+        });
+
+        await prisma.problemSolved.upsert({
+          where: {
+            userID_problemID: {
+              userID: recruiter.id,
+              problemID: flagged.id,
+            },
+          },
+          update: {},
+          create: {
+            userID: recruiter.id,
+            problemID: flagged.id,
+          },
+        });
+      }
+    }
 
   } catch (error) {
     console.error("❌ Error seeding database:", error);

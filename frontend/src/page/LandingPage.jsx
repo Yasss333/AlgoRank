@@ -77,7 +77,7 @@ const LandingPage = () => {
 
             <div className="grid grid-cols-3 gap-4 pt-8">
               <div className="space-y-2">
-                <div className="text-3xl font-bold text-primary">100+</div>
+                <div className="text-3xl font-bold text-primary">250+</div>
                 <div className="text-sm text-base-content/60">DSA Problems</div>
               </div>
               {/* <div className="space-y-2">

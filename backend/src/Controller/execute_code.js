@@ -37,6 +37,9 @@ export const executionRouter = async (req, res) => {
 // Submit code and save to database
 export const submitCodeHandler = async (req, res) => {
   const { sourceCode, languageKey, stdin, problemId, expectedOutputs } = req.body;
+  if (!req.user) {
+    return res.status(401).json({ message: "Authentication required. Please log in to submit code." });
+  }
   const userID = req.user.id;
 
   console.log("SUBMIT REQ.BODY:", req.body);

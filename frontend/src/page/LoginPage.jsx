@@ -2,10 +2,8 @@ import React ,{useState} from 'react';
 import { useForm } from 'react-hook-form';
 import {zodResolver} from "@hookform/resolvers/zod"
 import { Link } from 'react-router-dom';
-import {
-        Code , Eye,EyeOff, Loader2, Lock , Mail , 
-} from "lucide-react";
-import {email, z} from "zod";
+import { Code , Eye,EyeOff, Loader2, Lock , Mail } from "lucide-react";
+import { z } from "zod";
 import AuthImagePattern from "../Components/AuthImagePattern";
 import { useAuthStore } from '../store/useAuthStore.js';
 
@@ -23,8 +21,13 @@ const LoginPage = () => {
     const {login, isLoggingIn}=useAuthStore()
 
     const {
-        register, handleSubmit, formState:{errors}
+        register, handleSubmit, formState:{errors}, setValue
     }=useForm({resolver:zodResolver(LoginSchema)});
+
+    const fillDemoCredentials = () => {
+      setValue("email", "admin@algorank.com");
+      setValue("password", "admin123");
+    }
 
     const onSubmit=async(data)=>{
       try {
@@ -47,6 +50,12 @@ const LoginPage = () => {
               <h1 className="text-2xl font-bold mt-2">Welcome Back!  </h1>
               <p className="text-base-content/60">Login to your account</p>
             </div>
+          </div>
+
+          {/* Demo credentials bar */}
+          <div className="mb-4 p-3 bg-base-200 rounded-md text-sm text-base-content/80">
+            Demo: <strong>admin@algorank.com</strong> / <strong>admin123</strong>
+            <button type="button" onClick={fillDemoCredentials} className="btn btn-xs btn-ghost ml-3">Use</button>
           </div>
 
           {/* Form */}
