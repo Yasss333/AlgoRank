@@ -84,31 +84,34 @@ const ProfilePage = () => {
           <div className="card-body">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
               {/* Avatar */}
-              <div className="avatar">
-                <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img
-                    src={authUser.image || "user.svg"}
-                    alt={authUser.name || "User"}
-                    className="object-cover"
-                  />
-                </div>
+              <div>
+                {authUser.image ? (
+                  <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-base-200 shadow-sm">
+                    <img src={authUser.image} alt={authUser.name || "User"} className="object-cover w-full h-full" />
+                  </div>
+                ) : (
+                  <div className="w-28 h-28 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold">
+                    {authUser.name
+                      ? authUser.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .slice(0, 2)
+                          .join("")
+                          .toUpperCase()
+                      : "AD"}
+                  </div>
+                )}
               </div>
 
               {/* User Info */}
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-3xl font-bold">{authUser.name || "User"}</h1>
-                  <span
-                    className={`badge badge-lg ${
-                      authUser.role === "ADMIN"
-                        ? "badge-warning"
-                        : "badge-primary"
-                    }`}
-                  >
+                  <span className={`badge badge-lg ${authUser.role === "ADMIN" ? "badge-neutral" : "badge-primary"}`}>
                     {authUser.role === "ADMIN" ? (
                       <>
                         <Shield className="w-4 h-4 mr-1" />
-                        Admin
+                        Administrator
                       </>
                     ) : (
                       <>
@@ -117,6 +120,9 @@ const ProfilePage = () => {
                       </>
                     )}
                   </span>
+                  <Link to="/profile/edit" className="btn btn-sm btn-outline ml-3">
+                    Edit Profile
+                  </Link>
                 </div>
                 <div className="space-y-2 text-base-content/70">
                   <div className="flex items-center gap-2">
@@ -132,6 +138,13 @@ const ProfilePage = () => {
                         day: "numeric",
                       })}
                     </span>
+                  </div>
+                  {/* Professional subtitle / bio */}
+                  <div className="mt-2 text-sm text-base-content/70">
+                    <div className="font-medium">{authUser.role === "ADMIN" ? "Platform Administrator" : "Learner"}</div>
+                    <div className="mt-1">
+                      {authUser.bio || "Passionate about building developer tools and improving the learning experience for algorithm practice."}
+                    </div>
                   </div>
                 </div>
               </div>

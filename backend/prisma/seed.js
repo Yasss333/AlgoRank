@@ -735,6 +735,36 @@ var twoSum = function(nums, target) {
   },
 ];
 
+// Auto-generate additional synthetic problems to reach a larger seeded dataset (250+)
+const TARGET_PROBLEMS = 250;
+if (problems.length < TARGET_PROBLEMS) {
+  const start = problems.length + 1;
+  for (let i = start; i <= TARGET_PROBLEMS; i++) {
+    const diff = i % 3 === 0 ? "HARD" : i % 3 === 1 ? "EASY" : "MEDIUM";
+    problems.push({
+      title: `Auto Problem #${i}`,
+      description: `Automatically generated problem #${i} — practice question for algorithms and data structures. This is a synthetic prompt used for seeding and load testing.`,
+      difficulty: diff,
+      tags: ["Auto-Generated", diff, "Practice"],
+      examples: {
+        example1: { input: "n = 5", output: "<output>", explanation: "Example for auto problem" },
+      },
+      constraints: "1 <= n <= 10^5",
+      testcases: [
+        { input: "5", output: "<output>" },
+        { input: "10", output: "<output>" },
+      ],
+      codeSnippets: {
+        JAVASCRIPT: `// Auto Problem #${i} starter code\nfunction solution() {\n  // implement\n}\n`,
+        PYTHON: `# Auto Problem #${i} starter code\ndef solution():\n    pass\n`,
+        JAVA: `// Auto Problem #${i} starter code\npublic class Solution {\n  public static void main(String[] args) {}\n}\n`,
+      },
+      hints: "Think about time and space tradeoffs.",
+    });
+  }
+  console.log(`🔧 Auto-generated ${TARGET_PROBLEMS - (start - 1)} problems to reach ${TARGET_PROBLEMS}`);
+}
+
 async function main() {
   try {
     console.log("🌱 Starting database seeding...");
