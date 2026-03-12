@@ -8,18 +8,10 @@ router.post("/", verfiyJWT, executionRouter);
 router.post("/submit", verfiyJWT, submitCodeHandler);
 
 // Friendly GET responses to avoid "Cannot GET /..." when visited in browser
-router.get("/", (req, res) => {
-	res.status(405).json({ message: "Method GET not allowed. Use POST /api/v1/execute-route/ to execute code." });
-});
-
-router.get("/submit", (req, res) => {
-	res.status(405).json({ message: "Method GET not allowed. Use POST /api/v1/execute-route/submit to submit code." });
-});
-
-// Catch-all for other methods
-router.all("/", (req, res, next) => {
+// Enforce POST-only: respond 405 for non-POST methods on these routes
+router.all(["/", "/submit"], (req, res, next) => {
 	if (req.method !== "POST") {
-		return res.status(405).json({ message: `Method ${req.method} not allowed on this endpoint.` });
+		return res.status(405).json({ message: `Method ${req.method} not allowed on this endpoint. Use POST.` });
 	}
 	next();
 });
