@@ -18,6 +18,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "https://algo-rank-333.vercel.app",
+    "https://algo-rank.vercel.app/"
 ];
 
 app.use(cors({
