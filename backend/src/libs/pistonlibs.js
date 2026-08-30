@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const PISTON_URL = "https://emkc.org/api/v2/piston/execute";
+const PISTON_URL = "http://localhost:2000/api/v2/execute";
 
 const languageMap = {
-  PYTHON: { language: "python", version: "3.10.0" },
-  JAVASCRIPT: { language: "javascript", version: "18.15.0" },
+  PYTHON: { language: "python", version: "3.12.0" },
+  JAVASCRIPT: { language: "javascript", version: "20.11.1" },
   CPP: { language: "cpp", version: "10.2.0" },
   JAVA: { language: "java", version: "15.0.2" }
 };

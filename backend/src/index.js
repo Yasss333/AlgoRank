@@ -10,6 +10,7 @@ import probRouter from "../src/Routes/problemManagement.route.js"
 import executionRouter from "../src/Routes/execute_coderoutes.js"
 import submissionRoute from "../src/Routes/submission_route.js";
 import playlistRoute from "../src/Routes/playlistRoute.js"
+import rankingRouter from "../src/Routes/ranking.routes.js"
 dotenv.config();
 const app = express();
 
@@ -73,9 +74,10 @@ app.get("/",(req,res)=>{
 
  app.use("/api/v1/auth",authRouter);
  app.use("/api/v1/problems",probRouter);
- app.use("/api/v1/execute-route",executionRouter);  
- app.use("/api/v1/submission",submissionRoute)
- app.use("/api/v1/playlist",playlistRoute)
+ app.use("/api/v1/execute-route",executionRouter);
+ app.use("/api/v1/submission",submissionRoute);
+ app.use("/api/v1/playlist",playlistRoute);
+ app.use("/api/v1/ranking",rankingRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);

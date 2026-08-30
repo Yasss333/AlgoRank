@@ -16,13 +16,22 @@ import {
   ThumbsUp,
   Home,
 } from "lucide-react";
-// import { getLanguageId } from "../lib/lang";
 import { Link, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
 import { useExecutionStore } from "../store/useExecutionStore";
 import { useSubmissionStore } from "../store/useSubmissionStore";
 import Submission from "../Components/Submission";
 import SubmissionsList from "../Components/SubmissionList";
+import { 
+  getLanguageDisplayName, 
+  getMonacoLanguage, 
+  getAllLanguages,
+  isLanguageSupported 
+} from "../lib/lang";
+import { 
+  getDefaultCodeTemplate, 
+  hasDefaultTemplate 
+} from "../lib/defaultCodeTemplates";
 
 const ProblemPage = () => {
   const { id } = useParams();
@@ -51,33 +60,23 @@ const ProblemPage = () => {
 
   useEffect(() => {
     if (problem && problem.codeSnippets) {
-      // Initialize code with JavaScript snippet by default
+      // Get code for current language with fallback to default template
       const langKey = selectedLanguage.toUpperCase();
+      let codeSnippet = problem.codeSnippets[langKey] || 
+                       problem.codeSnippets[selectedLanguage] || 
+                       getDefaultCodeTemplate(selectedLanguage);
       
-      // Try multiple key formats to find the code snippet
-      let codeSnippet = "";
-      if (problem.codeSnippets[langKey]) {
-        codeSnippet = problem.codeSnippets[langKey];
-      } else if (problem.codeSnippets[selectedLanguage]) {
-        codeSnippet = problem.codeSnippets[selectedLanguage];
-      } else if (problem.codeSnippets.JAVASCRIPT) {
-        codeSnippet = problem.codeSnippets.JAVASCRIPT;
-      } else if (problem.codeSnippets.PYTHON) {
-        codeSnippet = problem.codeSnippets.PYTHON;
-      } else if (problem.codeSnippets.JAVA) {
-        codeSnippet = problem.codeSnippets.JAVA;
-      } else {
-        // Get first available code snippet
-        const firstKey = Object.keys(problem.codeSnippets)[0];
-        if (firstKey) {
-          codeSnippet = problem.codeSnippets[firstKey];
-        }
-      }
+      setCode(codeSnippet);
       
-      // Only update if we have a code snippet or if code is empty
-      if (codeSnippet || !code) {
-        setCode(codeSnippet);
-      }
+      setTestCases(
+        problem.testcases?.map((tc) => ({
+          input: tc.input,
+          output: tc.output,
+        })) || [],
+      );
+    } else if (problem) {
+      // If no code snippets, use default template
+      setCode(getDefaultCodeTemplate(selectedLanguage));
       
       setTestCases(
         problem.testcases?.map((tc) => ({
@@ -100,9 +99,12 @@ const ProblemPage = () => {
     const lang = e.target.value;
     setSelectedLanguage(lang);
     const langKey = lang.toUpperCase();
-    const codeSnippet = problem?.codeSnippets?.[langKey] || 
+    
+    // Try to get code from problem snippets, otherwise use default template
+    let codeSnippet = problem?.codeSnippets?.[langKey] || 
                          problem?.codeSnippets?.[lang] ||
-                         "";
+                         getDefaultCodeTemplate(lang);
+    
     setCode(codeSnippet);
   };
 
@@ -310,9 +312,9 @@ const ProblemPage = () => {
             value={selectedLanguage}
             onChange={handleLanguageChange}
           >
-            {Object.keys(problem.codeSnippets || {}).map((lang) => (
-              <option key={lang} value={lang.toUpperCase()}>
-                {lang.charAt(0).toUpperCase() + lang.slice(1)}
+            {getAllLanguages().map((lang) => (
+              <option key={lang.key} value={lang.key}>
+                {lang.name}
               </option>
             ))}
           </select>
@@ -378,7 +380,7 @@ const ProblemPage = () => {
               <div className="h-[600px] w-full">
                 <Editor
                   height="100%"
-                  language={selectedLanguage.toLowerCase()}
+                  language={getMonacoLanguage(selectedLanguage)}
                   theme="vs-dark"
                   value={code}
                   onChange={(value) => {

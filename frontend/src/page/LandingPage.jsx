@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Code2,
@@ -10,9 +10,47 @@ import {
   ChevronRight,
   Sparkles,
   GitBranch,
+  Trophy,
+  Crown,
+  Medal,
 } from "lucide-react";
 
 const LandingPage = () => {
+  const [topUsers, setTopUsers] = useState([]);
+  const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(false);
+
+  useEffect(() => {
+    // Fetch top 5 users for leaderboard preview
+    const fetchTopUsers = async () => {
+      setIsLoadingLeaderboard(true);
+      try {
+        // This would normally call the ranking API
+        // For now, we'll use mock data
+        const mockTopUsers = [
+          { rank: 1, name: "CodeMaster99", totalProblemsSolved: 156, acceptanceRate: 95.2, currentStreak: 45, image: null },
+          { rank: 2, name: "AlgorithmNinja", totalProblemsSolved: 142, acceptanceRate: 92.8, currentStreak: 32, image: null },
+          { rank: 3, name: "DSAExpert", totalProblemsSolved: 138, acceptanceRate: 89.5, currentStreak: 28, image: null },
+          { rank: 4, name: "PythonWizard", totalProblemsSolved: 125, acceptanceRate: 91.2, currentStreak: 21, image: null },
+          { rank: 5, name: "JavaChampion", totalProblemsSolved: 118, acceptanceRate: 88.7, currentStreak: 19, image: null },
+        ];
+        setTopUsers(mockTopUsers);
+      } catch (error) {
+        console.error("Error fetching top users:", error);
+      } finally {
+        setIsLoadingLeaderboard(false);
+      }
+    };
+
+    fetchTopUsers();
+  }, []);
+
+  const getRankIcon = (rank) => {
+    if (rank === 1) return <Crown className="w-5 h-5 text-yellow-500" />;
+    if (rank === 2) return <Medal className="w-5 h-5 text-gray-400" />;
+    if (rank === 3) return <Medal className="w-5 h-5 text-amber-700" />;
+    return <span className="text-sm font-semibold text-base-content/60">#{rank}</span>;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-200 to-base-300 overflow-hidden">
       {/* Animated background blobs */}
@@ -77,7 +115,7 @@ const LandingPage = () => {
 
             <div className="grid grid-cols-3 gap-4 pt-8">
               <div className="space-y-2">
-                <div className="text-3xl font-bold text-primary">250+</div>
+                <div className="text-3xl font-bold text-primary">500+</div>
                 <div className="text-sm text-base-content/60">DSA Problems</div>
               </div>
               {/* <div className="space-y-2">
@@ -120,6 +158,86 @@ const LandingPage = () => {
                     <div className="flex-1 h-2 bg-base-300 rounded"></div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Leaderboard Preview Section */}
+      <section className="relative z-10 py-16 bg-base-200/50 backdrop-blur">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Trophy className="w-8 h-8 text-primary" />
+              <h2 className="text-4xl font-bold">Top Performers</h2>
+            </div>
+            <p className="text-lg text-base-content/60 max-w-2xl mx-auto">
+              See how you stack up against the best developers on AlgoRank
+            </p>
+          </div>
+
+          <div className="card bg-base-100 shadow-xl max-w-4xl mx-auto">
+            <div className="card-body">
+              {isLoadingLeaderboard ? (
+                <div className="flex justify-center py-8">
+                  <span className="loading loading-spinner loading-lg"></span>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Problems Solved</th>
+                        <th>Acceptance Rate</th>
+                        <th>Current Streak</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topUsers.map((user) => (
+                        <tr key={user.rank}>
+                          <td>
+                            <div className="flex items-center gap-2">
+                              {getRankIcon(user.rank)}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">
+                                {user.name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()}
+                              </div>
+                              <span className="font-medium">{user.name}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="flex items-center gap-1">
+                              <Target className="w-4 h-4 text-success" />
+                              <span>{user.totalProblemsSolved}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="flex items-center gap-1">
+                              <TrendingUp className="w-4 h-4 text-info" />
+                              <span>{user.acceptanceRate.toFixed(1)}%</span>
+                            </div>
+                          </td>
+                          <td>
+                            <span className="badge badge-warning">{user.currentStreak} days</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <div className="card-actions justify-end mt-6">
+                <Link to="/login" className="btn btn-primary gap-2">
+                  Join the Competition
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
               </div>
             </div>
           </div>
@@ -196,6 +314,131 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Dynamic Content Section */}
+      <section className="relative z-10 py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">What's Trending</h2>
+            <p className="text-lg text-base-content/60 max-w-2xl mx-auto">
+              Stay updated with the latest activity and popular topics
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Trending Problems */}
+            <div className="card bg-base-100 shadow-lg">
+              <div className="card-body">
+                <h3 className="card-title flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                  Trending Problems
+                </h3>
+                <div className="space-y-3 mt-4">
+                  <div className="flex items-center justify-between p-2 bg-base-200 rounded">
+                    <span className="text-sm font-medium">Two Sum</span>
+                    <span className="badge badge-sm badge-success">Easy</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-base-200 rounded">
+                    <span className="text-sm font-medium">Longest Substring</span>
+                    <span className="badge badge-sm badge-warning">Medium</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-base-200 rounded">
+                    <span className="text-sm font-medium">Binary Tree Level Order</span>
+                    <span className="badge badge-sm badge-warning">Medium</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="card bg-base-100 shadow-lg">
+              <div className="card-body">
+                <h3 className="card-title flex items-center gap-2">
+                  <Users className="w-5 h-5 text-secondary" />
+                  Recent Activity
+                </h3>
+                <div className="space-y-3 mt-4">
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 rounded-full bg-success"></div>
+                    <span>John solved Two Sum</span>
+                    <span className="text-xs text-base-content/60">2m ago</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 rounded-full bg-success"></div>
+                    <span>Sarah completed 5 problems today</span>
+                    <span className="text-xs text-base-content/60">15m ago</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 rounded-full bg-info"></div>
+                    <span>Mike started a 30-day streak</span>
+                    <span className="text-xs text-base-content/60">1h ago</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Active Topics */}
+            <div className="card bg-base-100 shadow-lg">
+              <div className="card-body">
+                <h3 className="card-title flex items-center gap-2">
+                  <Code2 className="w-5 h-5 text-accent" />
+                  Active Topics
+                </h3>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <span className="badge badge-lg badge-primary">Arrays</span>
+                  <span className="badge badge-lg badge-secondary">Strings</span>
+                  <span className="badge badge-lg badge-accent">Trees</span>
+                  <span className="badge badge-lg badge-info">Dynamic Programming</span>
+                  <span className="badge badge-lg badge-success">Graphs</span>
+                  <span className="badge badge-lg badge-warning">Linked Lists</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="relative z-10 py-16 bg-base-200/50 backdrop-blur">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">How It Works</h2>
+            <p className="text-lg text-base-content/60 max-w-2xl mx-auto">
+              Start improving your coding skills in three simple steps
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-primary text-primary-content flex items-center justify-center text-2xl font-bold mx-auto">
+                1
+              </div>
+              <h3 className="text-xl font-bold">Choose a Problem</h3>
+              <p className="text-base-content/70">
+                Browse through our curated collection of DSA problems across various difficulty levels and topics
+              </p>
+            </div>
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-secondary text-secondary-content flex items-center justify-center text-2xl font-bold mx-auto">
+                2
+              </div>
+              <h3 className="text-xl font-bold">Write & Test Code</h3>
+              <p className="text-base-content/70">
+                Use our in-browser code editor to write solutions and test them against multiple test cases
+              </p>
+            </div>
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-accent text-accent-content flex items-center justify-center text-2xl font-bold mx-auto">
+                3
+              </div>
+              <h3 className="text-xl font-bold">Track Progress</h3>
+              <p className="text-base-content/70">
+                Monitor your improvement with detailed statistics, climb the leaderboard, and compete with others
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="relative z-10 py-20">
         <div className="container mx-auto px-4">
@@ -212,6 +455,71 @@ const LandingPage = () => {
               <Link to="/login" className="btn btn-outline btn-lg">
                 Already Have an Account?
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="relative z-10 py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Success Stories</h2>
+            <p className="text-lg text-base-content/60 max-w-2xl mx-auto">
+              Hear from developers who've improved their skills with AlgoRank
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="card bg-base-100 shadow-lg">
+              <div className="card-body">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center text-lg font-bold">
+                    JD
+                  </div>
+                  <div>
+                    <div className="font-bold">John Doe</div>
+                    <div className="text-sm text-base-content/60">Software Engineer at Google</div>
+                  </div>
+                </div>
+                <p className="text-base-content/80">
+                  "AlgoRank helped me crack my Google interview. The structured problem sets and instant feedback were game-changers for my preparation."
+                </p>
+              </div>
+            </div>
+
+            <div className="card bg-base-100 shadow-lg">
+              <div className="card-body">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-secondary text-secondary-content flex items-center justify-center text-lg font-bold">
+                    SK
+                  </div>
+                  <div>
+                    <div className="font-bold">Sarah Kim</div>
+                    <div className="text-sm text-base-content/60">Frontend Developer at Meta</div>
+                  </div>
+                </div>
+                <p className="text-base-content/80">
+                  "The leaderboard feature kept me motivated throughout my preparation. I went from solving 5 problems to 150+ in just 3 months!"
+                </p>
+              </div>
+            </div>
+
+            <div className="card bg-base-100 shadow-lg">
+              <div className="card-body">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-accent text-accent-content flex items-center justify-center text-lg font-bold">
+                    MP
+                  </div>
+                  <div>
+                    <div className="font-bold">Mike Patel</div>
+                    <div className="text-sm text-base-content/60">Full Stack Developer at Amazon</div>
+                  </div>
+                </div>
+                <p className="text-base-content/80">
+                  "The variety of problems and the streak tracking feature made daily practice addictive. I improved my problem-solving speed significantly."
+                </p>
+              </div>
             </div>
           </div>
         </div>

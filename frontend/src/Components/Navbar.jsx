@@ -1,5 +1,5 @@
 import React from "react"
-import { User, Code, LogOut } from "lucide-react";
+import { User, Code, LogOut, Trophy } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
 import LogoutButton from "./LogoutButton";
@@ -62,6 +62,15 @@ const Navbar = ()=>{
                 >
                   <User className="w-4 h-4 mr-2" />
                   My Profile
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/ranking"
+                  className="hover:bg-primary hover:text-white text-base font-semibold"
+                >
+                  <Trophy className="w-4 h-4 mr-2" />
+                  Leaderboard
                 </Link>
               </li>
               {authUser?.role === "ADMIN" && (

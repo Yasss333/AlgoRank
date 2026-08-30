@@ -17,6 +17,7 @@ import { useState } from 'react';
 import api from "../lib/axios"
 import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
+import { getMonacoLanguage, getAllLanguages } from "../lib/lang";
 
 const problemSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -853,7 +854,7 @@ const CreateProblemForm = () => {
                             render={({ field }) => (
                               <Editor
                                 height="300px"
-                                language={language.toLowerCase()}
+                                language={getMonacoLanguage(language)}
                                 theme="vs-dark"
                                 value={field.value}
                                 onChange={field.onChange}
@@ -893,7 +894,7 @@ const CreateProblemForm = () => {
                             render={({ field }) => (
                               <Editor
                                 height="300px"
-                                language={language.toLowerCase()}
+                                language={getMonacoLanguage(language)}
                                 theme="vs-dark"
                                 value={field.value}
                                 onChange={field.onChange}

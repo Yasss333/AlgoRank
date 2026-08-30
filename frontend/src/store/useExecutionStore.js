@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
+import { getStatusDescription, getErrorMessage } from "../lib/judge0Status";
 
 export const useExecutionStore = create((set) => ({
   isExecuting: false,
@@ -23,11 +24,26 @@ executeCode: async ({ sourceCode, languageKey, stdin }) => {
       stdin,
     });
 
-    set({ submission: res.data.result });
-    toast.success("Code executed successfully");
+    // Handle Judge0 response format
+    const result = res.data.result;
+    
+    // Provide user-friendly feedback based on status
+    if (result.status) {
+      const statusDesc = getStatusDescription(result.status.id || result.status);
+      if (result.status.id === 3 || result.status.id === 10) {
+        toast.success(`Code executed: ${statusDesc}`);
+      } else {
+        toast.error(`${statusDesc}: ${getErrorMessage(result.status.id)}`);
+      }
+    } else {
+      toast.success("Code executed successfully");
+    }
+
+    set({ submission: result });
   } catch (error) {
     console.error("Error executing code", error);
-    toast.error("Error executing code");
+    const errorMessage = error.response?.data?.error || error.message || "Error executing code";
+    toast.error(errorMessage);
   } finally {
     set({ isExecuting: false });
   }
@@ -55,12 +71,22 @@ submitCode: async ({ sourceCode, languageKey, stdin, problemId, expectedOutputs 
     });
 
     set({ submission: res.data.submission });
-    toast.success(res.data.message || "Code submitted successfully");
+    
+    // Check if all test cases passed
+    const allPassed = res.data.testCaseResults?.every(tc => tc.passed);
+    if (allPassed) {
+      toast.success("All test cases passed! 🎉");
+    } else {
+      const passedCount = res.data.testCaseResults?.filter(tc => tc.passed).length || 0;
+      const totalCount = res.data.testCaseResults?.length || 0;
+      toast.error(`${passedCount}/${totalCount} test cases passed`);
+    }
     
     return res.data.submission;
   } catch (error) {
     console.error("Error submitting code", error);
-    toast.error("Error submitting code");
+    const errorMessage = error.response?.data?.error || error.message || "Error submitting code";
+    toast.error(errorMessage);
     throw error;
   } finally {
     set({ isExecuting: false });

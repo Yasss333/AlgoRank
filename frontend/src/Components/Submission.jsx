@@ -6,6 +6,7 @@ import {
   MemoryStick as Memory,
   Terminal
 } from "lucide-react";
+import { getStatusDescription, getErrorMessage } from "../lib/judge0Status";
 
 const SubmissionResults = ({ submission }) => {
   if (!submission) return null;
@@ -14,13 +15,21 @@ const SubmissionResults = ({ submission }) => {
      Normalize incoming data
   ---------------------------- */
 
+  // Handle both testCases (old format) and testCaseResults (new Judge0 format)
   const testCases = Array.isArray(submission.testCases)
     ? submission.testCases
+    : Array.isArray(submission.testCaseResults)
+    ? submission.testCaseResults
     : [];
 
   const hasTestCases = testCases.length > 0;
 
   const status = submission.status || "Executed";
+  
+  // Handle Judge0 status if present
+  const statusId = submission.statusId || submission.status?.id;
+  const statusDescription = statusId ? getStatusDescription(statusId) : status;
+  const errorMessage = statusId ? getErrorMessage(statusId) : null;
   const stdout = submission.stdout || "";
   const stderr = submission.stderr || "";
 
@@ -75,11 +84,14 @@ const SubmissionResults = ({ submission }) => {
             <h3 className="card-title text-sm">Status</h3>
             <div
               className={`text-lg font-bold ${
-                status === "Accepted" ? "text-success" : "text-warning"
+                status === "Accepted" || statusId === 3 ? "text-success" : "text-warning"
               }`}
             >
-              {status}
+              {statusDescription}
             </div>
+            {errorMessage && (
+              <div className="text-xs text-base-content/60 mt-1">{errorMessage}</div>
+            )}
           </div>
         </div>
 
@@ -210,10 +222,10 @@ const SubmissionResults = ({ submission }) => {
                           </span>
                         )}
                       </td>
-                      <td className="font-mono">{tc.expected}</td>
-                      <td className="font-mono">{tc.stdout ?? "null"}</td>
-                      <td>{tc.memory || "N/A"}</td>
-                      <td>{tc.time || "N/A"}</td>
+                      <td className="font-mono text-sm">{tc.expected || "N/A"}</td>
+                      <td className="font-mono text-sm">{tc.stdout || "N/A"}</td>
+                      <td className="text-sm">{tc.memory || "N/A"}</td>
+                      <td className="text-sm">{tc.time || "N/A"}</td>
                     </tr>
                   ))}
                 </tbody>

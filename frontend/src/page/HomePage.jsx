@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { useProblemStore } from "../store/useProblemStore";
-import { Loader } from "lucide-react";
+import { Loader, Trophy } from "lucide-react";
 import ProblemTable from "../Components/ProblemTable";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
@@ -38,13 +38,17 @@ const HomePage = () => {
       <p className="mt-4 text-center text-lg font-semibold text-gray-500 dark:text-gray-400 z-10">
         A Platform Inspired by Leetcode/TUF+ which helps you to prepare for coding
         interviews and helps you to improve your coding skills by solving coding
-        problems
+        problems. Compete with others on the global leaderboard!
       </p>
 
       {/* Hero CTAs and stats */}
       <div className="mt-6 flex flex-col md:flex-row items-center gap-4 z-10">
         <div className="flex gap-3">
           <Link to="/" className="btn btn-primary">Explore Problems</Link>
+          <Link to="/ranking" className="btn btn-secondary gap-2">
+            <Trophy className="w-4 h-4" />
+            Leaderboard
+          </Link>
           {authUser && authUser.role === "ADMIN" && (
             <Link to="/add-problem" className="btn btn-outline">Add Problem</Link>
           )}

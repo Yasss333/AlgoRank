@@ -1,5 +1,7 @@
-import { runCodeWithPiston, safeRunCodeWithPiston } from "../libs/pistonlibs.js";
+import { getJudge0LanguageId, submitBatch, pollBatchResults } from "../libs/judge0.libs.js";
 import { db } from "../libs/db.js";
+import { updateUserRankingStats } from "../utils/rankingUtils.js";
+import { safeRunCodeWithPiston } from "../libs/pistonlibs.js";
 
 
 // controllers/execute_code.js
@@ -15,18 +17,31 @@ export const executionRouter = async (req, res) => {
       });
     }
 
-    const result = await runCodeWithPiston({
+    // Run code against the self-hosted Piston API
+    const result = await safeRunCodeWithPiston({
       language: languageKey,
       sourceCode,
-      stdin, // string is OK for piston
+      stdin: stdin || ""
     });
+
+    const success = result.exitCode === 0;
 
     return res.status(200).json({
       success: true,
-      result,
+      result: {
+        stdout: result.stdout || "",
+        stderr: result.stderr || "",
+        exitCode: result.exitCode,
+        status: {
+          id: success ? 3 : 11,
+          description: success ? "Accepted" : "Runtime Error"
+        },
+        memory: null,
+        time: null
+      },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Execution error:", error);
     return res.status(500).json({
       message: "Execution failed",
       error: error.message,
@@ -52,27 +67,37 @@ export const submitCodeHandler = async (req, res) => {
       });
     }
 
-    // Run code against testcases
+    const languageId = getJudge0LanguageId(languageKey);
+    if (!languageId) {
+      return res.status(400).json({
+        message: `Unsupported language: ${languageKey}`,
+      });
+    }
+
+    // Run code against testcases using Judge0 batch submission
     const stdinArray = stdin ? stdin.split("\n") : [];
     let allPassed = true;
     let memory = [];
     let time = [];
     let testCaseResults = [];
 
-    for (let i = 0; i < stdinArray.length; i++) {
-      let result;
-      try {
-        // Prefer safe wrapper which surfaces upstream status
-        result = await safeRunCodeWithPiston({
-          language: languageKey,
-          sourceCode,
-          stdin: stdinArray[i],
-        });
-      } catch (execErr) {
-        console.error("Execution error on testcase", i + 1, execErr.message || execErr);
-        return res.status(execErr.status || 502).json({ message: "Execution service error", error: execErr.message || String(execErr) });
-      }
+    // Prepare batch submissions
+    const batchSubmissions = stdinArray.map((input, i) => ({
+      sourceCode,
+      languageId,
+      stdin: input,
+      expectedOutput: expectedOutputs?.[i]
+    }));
 
+    // Submit batch to Judge0
+    const batchResult = await submitBatch(batchSubmissions);
+    const tokens = batchResult.map(sub => sub.token);
+
+    // Poll for all results
+    const results = await pollBatchResults(tokens);
+
+    // Process results
+    results.forEach((result, i) => {
       const passed = result.stdout?.trim() === (expectedOutputs?.[i]?.trim() || "");
       
       testCaseResults.push({
@@ -81,7 +106,7 @@ export const submitCodeHandler = async (req, res) => {
         stdout: result.stdout || "",
         expected: expectedOutputs?.[i] || "",
         stderr: result.stderr || "",
-        status: result.status?.description || "Executed",
+        status: result.status.description || "Executed",
         memory: result.memory || "",
         time: result.time || "",
       });
@@ -89,7 +114,7 @@ export const submitCodeHandler = async (req, res) => {
       if (result.memory) memory.push(result.memory);
       if (result.time) time.push(result.time);
       if (!passed) allPassed = false;
-    }
+    });
 
     // Create submission in database
     const submission = await db.submission.create({
@@ -124,6 +149,9 @@ export const submitCodeHandler = async (req, res) => {
           problemID: problemId,
         },
       });
+
+      // Update user ranking statistics after successful submission
+      await updateUserRankingStats(userID);
     }
 
     // Get the created submission with any related data

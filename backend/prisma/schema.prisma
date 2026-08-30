@@ -34,6 +34,15 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Ranking fields
+  totalProblemsSolved Int      @default(0)
+  acceptanceRate      Float    @default(0)
+  averageSolveTime    Float?
+  currentStreak       Int      @default(0)
+  longestStreak       Int      @default(0)
+  lastSolvedDate      DateTime?
+  rankingScore        Float    @default(0)
+
   problems      Problem[]
   submissions   Submission[]
   problemSolved problemSolved[]
@@ -41,6 +50,10 @@ model User {
   likes Likes[]
   comments Comments[]
   nestedComments NestedComments[]
+
+  @@index([totalProblemsSolved])
+  @@index([rankingScore])
+  @@index([lastSolvedDate])
 }
 
 model Problem {

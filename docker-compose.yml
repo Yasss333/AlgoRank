@@ -13,5 +13,21 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  piston:
+    image: ghcr.io/engineer-man/piston
+    container_name: algo-piston
+    privileged: true
+    ports:
+      - "2000:2000"
+    environment:
+      PISTON_RUN_TIMEOUT: "10000"
+      PISTON_RUN_CPU_TIME: "10000"
+      PISTON_COMPILE_TIMEOUT: "20000"
+      PISTON_COMPILE_CPU_TIME: "20000"
+    volumes:
+      - pistondata:/piston
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  pistondata:
