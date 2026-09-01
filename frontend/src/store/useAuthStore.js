@@ -67,7 +67,9 @@ export const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await api.post("/auth/logout");
+      const sessionProblems = JSON.parse(localStorage.getItem("algorank_session_problems") || "[]");
+      await api.post("/auth/logout", { problemIDs: sessionProblems });
+      localStorage.removeItem("algorank_session_problems"); // Remove session problems
       localStorage.removeItem("token"); // Remove token from localStorage
       set({ authUser: null });
 

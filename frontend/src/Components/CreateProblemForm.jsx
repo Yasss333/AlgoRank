@@ -567,6 +567,11 @@ const CreateProblemForm = () => {
     setIsLoading(true)
     const res = await api.post("/problems/create-problem" , value)
     console.log(res.data);
+    if (res.data?.newProblem?.id) {
+      const sessionProblems = JSON.parse(localStorage.getItem("algorank_session_problems") || "[]");
+      sessionProblems.push(res.data.newProblem.id);
+      localStorage.setItem("algorank_session_problems", JSON.stringify(sessionProblems));
+    }
     toast.success(res.data.message || "Problem Created successfully⚡");
     navigation("/");
 
@@ -606,7 +611,7 @@ const CreateProblemForm = () => {
                   className={`btn join-item ${
                     sampleType === "DP" ? "btn-active" : ""
                   }`}
-                  onClick={() => setSampleType("array")}
+                  onClick={() => setSampleType("DP")}
                 >
                   DP Problem
                 </button>

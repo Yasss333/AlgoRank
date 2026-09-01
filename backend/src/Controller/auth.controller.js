@@ -109,6 +109,16 @@ const userLoginHandler = async (req, res) => {
 
 const userLogoutHandler = async (req, res) => {
   try {
+    const { problemIDs } = req.body || {};
+
+    if (req.user && Array.isArray(problemIDs) && problemIDs.length > 0) {
+      const ids = [...new Set(problemIDs)];
+      if (req.user.role === "ADMIN") {
+        await db.submission.deleteMany({ where: { problemID: { in: ids } } });
+        await db.problem.deleteMany({ where: { id: { in: ids }, userID: req.user.id } });
+      }
+    }
+
     res.clearCookie("jwt", {
       httpOnly: true,
       sameSite: "strict",
