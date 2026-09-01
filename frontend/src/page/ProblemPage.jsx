@@ -131,15 +131,16 @@ const ProblemPage = () => {
     e.preventDefault();
 
     try {
-      const stdin = problem.testcases.map((tc) => tc.input).join("\n");
-      const expectedOutputs = problem.testcases.map((tc) => tc.output);
+      const testcases = problem.testcases.map((tc) => ({
+        input: tc.input,
+        output: tc.output,
+      }));
 
       await submitCode({
         languageKey: selectedLanguage,
         sourceCode: code,
-        stdin,
         problemId: id,
-        expectedOutputs,
+        testcases,
       });
 
       // Refresh submissions after successful submit

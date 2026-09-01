@@ -50,7 +50,7 @@ executeCode: async ({ sourceCode, languageKey, stdin }) => {
 },
 
 // Submit code to database
-submitCode: async ({ sourceCode, languageKey, stdin, problemId, expectedOutputs }) => {
+submitCode: async ({ sourceCode, languageKey, stdin, problemId, expectedOutputs, testcases }) => {
   try {
     console.log("SUBMIT PAYLOAD:", {
       sourceCode,
@@ -58,6 +58,7 @@ submitCode: async ({ sourceCode, languageKey, stdin, problemId, expectedOutputs 
       stdin,
       problemId,
       expectedOutputs,
+      testcases,
     });
 
     set({ isExecuting: true });
@@ -68,6 +69,7 @@ submitCode: async ({ sourceCode, languageKey, stdin, problemId, expectedOutputs 
       stdin,
       problemId,
       expectedOutputs,
+      testcases,
     });
 
     set({ submission: res.data.submission });

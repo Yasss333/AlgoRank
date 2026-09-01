@@ -106,16 +106,19 @@ EOF
 docker compose up -d
 ```
 
-Install runtimes:
+Install runtimes (the backend supports JAVASCRIPT, PYTHON, CPP, JAVA — install all four):
 ```bash
 cd ~/piston
 git clone --depth 1 https://github.com/engineer-man/piston.git piston-cli
 cd piston-cli/cli && npm install
-node index.js ppman install python
 node index.js ppman install node
+node index.js ppman install python
 node index.js ppman install gcc
 node index.js ppman install java
 ```
+> Note: each runtime must exist on the Piston server or the backend returns
+> `400 "runtime is unknown"` for that language. Verify with:
+> `curl http://<PUBLIC_IP>:2000/api/v2/runtimes`
 
 Verify:
 ```bash

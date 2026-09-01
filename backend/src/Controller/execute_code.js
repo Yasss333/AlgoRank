@@ -1,7 +1,7 @@
-import { getJudge0LanguageId, submitBatch, pollBatchResults } from "../libs/judge0.libs.js";
 import { db } from "../libs/db.js";
 import { updateUserRankingStats } from "../utils/rankingUtils.js";
 import { safeRunCodeWithPiston } from "../libs/pistonlibs.js";
+import { buildRunnable } from "../libs/codeHarness.js";
 
 
 // controllers/execute_code.js
@@ -51,7 +51,7 @@ export const executionRouter = async (req, res) => {
 
 // Submit code and save to database
 export const submitCodeHandler = async (req, res) => {
-  const { sourceCode, languageKey, stdin, problemId, expectedOutputs } = req.body;
+  const { sourceCode, languageKey, stdin, problemId, expectedOutputs, testcases } = req.body;
   if (!req.user) {
     return res.status(401).json({ message: "Authentication required. Please log in to submit code." });
   }
@@ -67,46 +67,61 @@ export const submitCodeHandler = async (req, res) => {
       });
     }
 
-    const languageId = getJudge0LanguageId(languageKey);
-    if (!languageId) {
-      return res.status(400).json({
-        message: `Unsupported language: ${languageKey}`,
-      });
-    }
+    const langKey = String(languageKey || "").toUpperCase();
 
-    // Run code against testcases using Judge0 batch submission
-    const stdinArray = stdin ? stdin.split("\n") : [];
+    // Build the list of test cases from the structured `testcases` array when
+    // available, otherwise fall back to the legacy flattened stdin/expectedOutputs.
+    const cases = Array.isArray(testcases) && testcases.length > 0
+      ? testcases.map(tc => ({ input: tc?.input ?? "", expected: String(tc?.output ?? "").trim() }))
+      : (stdin ? stdin.split("\n").filter(s => s.trim() !== "") : [])
+          .map((input, i) => ({ input, expected: String(expectedOutputs?.[i] ?? "").trim() }));
+
     let allPassed = true;
     let memory = [];
     let time = [];
     let testCaseResults = [];
 
-    // Prepare batch submissions
-    const batchSubmissions = stdinArray.map((input, i) => ({
-      sourceCode,
-      languageId,
-      stdin: input,
-      expectedOutput: expectedOutputs?.[i]
-    }));
+    // Wrap the user's solution so it reads stdin and prints a result (gradable).
+    const runnable = buildRunnable({ language: langKey, sourceCode });
+    if (!runnable.ok) {
+      return res.status(400).json({ message: runnable.reason });
+    }
+    const runnableSource = runnable.source;
 
-    // Submit batch to Judge0
-    const batchResult = await submitBatch(batchSubmissions);
-    const tokens = batchResult.map(sub => sub.token);
+    for (let i = 0; i < cases.length; i++) {
+      const { input, expected } = cases[i];
 
-    // Poll for all results
-    const results = await pollBatchResults(tokens);
+      let result;
+      try {
+        result = await safeRunCodeWithPiston({
+          language: langKey,
+          sourceCode: runnableSource,
+          stdin: input
+        });
+      } catch (err) {
+        testCaseResults.push({
+          testCase: i + 1,
+          passed: false,
+          stdout: "",
+          expected,
+          stderr: err.message || String(err),
+          status: "Piston Error",
+          memory: "",
+          time: "",
+        });
+        allPassed = false;
+        continue;
+      }
 
-    // Process results
-    results.forEach((result, i) => {
-      const passed = result.stdout?.trim() === (expectedOutputs?.[i]?.trim() || "");
-      
+      const passed = result.exitCode === 0 && (result.stdout || "").trim() === expected;
+
       testCaseResults.push({
         testCase: i + 1,
         passed,
         stdout: result.stdout || "",
-        expected: expectedOutputs?.[i] || "",
+        expected,
         stderr: result.stderr || "",
-        status: result.status.description || "Executed",
+        status: result.exitCode === 0 ? "Accepted" : "Runtime Error",
         memory: result.memory || "",
         time: result.time || "",
       });
@@ -114,7 +129,7 @@ export const submitCodeHandler = async (req, res) => {
       if (result.memory) memory.push(result.memory);
       if (result.time) time.push(result.time);
       if (!passed) allPassed = false;
-    });
+    }
 
     // Create submission in database
     const submission = await db.submission.create({
@@ -123,7 +138,7 @@ export const submitCodeHandler = async (req, res) => {
         problemID: problemId,
         sourceCode,
         language: languageKey,
-        stdin: stdin || "",
+        stdin: (stdin || cases.map(c => c.input).join("\n")) || "",
         stdout: JSON.stringify(testCaseResults.map(r => r.stdout)),
         stderr: testCaseResults.some(r => r.stderr) 
           ? JSON.stringify(testCaseResults.map(r => r.stderr))
