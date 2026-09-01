@@ -31,8 +31,9 @@ export const useSubmissionStore = create((set, get) => ({
         `/submission/get-submissions/${problemId}`
       );
 
-      // Set both submission (singular) and submissions (plural) for compatibility
-      const submissionsData = res.data.submissions || [];
+      // Backend returns the list under `submission` (see submission_details.js).
+      // Read both keys defensively for compatibility.
+      const submissionsData = res.data.submissions || res.data.submission || [];
       set({ 
         submission: submissionsData.length > 0 ? submissionsData[0] : null,
         submissions: submissionsData 

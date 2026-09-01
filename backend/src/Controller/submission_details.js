@@ -61,10 +61,14 @@ export const getsubmissionByIDHandler=async (req,res)=>{
                     userID:userID,
                     problemID:problemID 
                 },
+                orderBy: {
+                    createdAt: "desc"
+                },
             });
             return res.status(200).json({
                 message:"Success in getting Submissions",
-                submission:submissionsofProblem
+                submission:submissionsofProblem,
+                submissions:submissionsofProblem
             })
         
           } catch (error) {

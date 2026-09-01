@@ -57,7 +57,6 @@ export const useRankingStore = create((set) => ({
       }
     } catch (error) {
       console.error("Error fetching user ranking:", error);
-      toast.error("Failed to fetch user ranking");
       set({ userRank: null, isLoadingUserRank: false });
     }
   },
@@ -78,7 +77,6 @@ export const useRankingStore = create((set) => ({
       }
     } catch (error) {
       console.error("Error fetching ranking stats:", error);
-      toast.error("Failed to fetch ranking stats");
       set({ rankingStats: null, isLoadingStats: false });
     }
   },
