@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const PISTON_URL = "http://localhost:2000/api/v2/execute";
+const PISTON_URL =
+  process.env.PISTON_API_URL ||
+  "http://localhost:2000/api/v2/execute";
 
 const languageMap = {
   PYTHON: { language: "python", version: "3.12.0" },
