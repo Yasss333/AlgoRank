@@ -32,7 +32,10 @@ export const runCodeWithPiston = async ({
   return {
     stdout: data.run.stdout,
     stderr: data.run.stderr,
-    exitCode: data.run.code
+    exitCode: data.run.code,
+    memory: data.run.memory,
+    cpuTime: data.run.cpu_time,
+    wallTime: data.run.wall_time
   };
 };
 

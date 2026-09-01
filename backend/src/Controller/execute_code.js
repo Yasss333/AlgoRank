@@ -17,14 +17,21 @@ export const executionRouter = async (req, res) => {
       });
     }
 
+    const runnable = buildRunnable({ language: languageKey.toUpperCase(), sourceCode });
+    if (!runnable.ok) {
+      return res.status(400).json({ message: runnable.reason });
+    }
+
     // Run code against the self-hosted Piston API
     const result = await safeRunCodeWithPiston({
       language: languageKey,
-      sourceCode,
+      sourceCode: runnable.source,
       stdin: stdin || ""
     });
 
     const success = result.exitCode === 0;
+    const memKB = typeof result.memory === "number" && result.memory >= 0 ? (result.memory / 1024).toFixed(2) : null;
+    const timeSec = typeof result.cpuTime === "number" && result.cpuTime >= 0 ? (result.cpuTime / 1000).toFixed(3) : null;
 
     return res.status(200).json({
       success: true,
@@ -36,8 +43,8 @@ export const executionRouter = async (req, res) => {
           id: success ? 3 : 11,
           description: success ? "Accepted" : "Runtime Error"
         },
-        memory: null,
-        time: null
+        memory: memKB !== null ? memKB : null,
+        time: timeSec !== null ? timeSec : null
       },
     });
   } catch (error) {
@@ -115,6 +122,10 @@ export const submitCodeHandler = async (req, res) => {
 
       const passed = result.exitCode === 0 && (result.stdout || "").trim() === expected;
 
+      // Piston returns memory in bytes and cpu_time/wall_time in milliseconds.
+      const memKB = typeof result.memory === "number" && result.memory >= 0 ? (result.memory / 1024).toFixed(2) : null;
+      const timeSec = typeof result.cpuTime === "number" && result.cpuTime >= 0 ? (result.cpuTime / 1000).toFixed(3) : null;
+
       testCaseResults.push({
         testCase: i + 1,
         passed,
@@ -122,12 +133,12 @@ export const submitCodeHandler = async (req, res) => {
         expected,
         stderr: result.stderr || "",
         status: result.exitCode === 0 ? "Accepted" : "Runtime Error",
-        memory: result.memory || "",
-        time: result.time || "",
+        memory: memKB !== null ? memKB : "",
+        time: timeSec !== null ? timeSec : "",
       });
 
-      if (result.memory) memory.push(result.memory);
-      if (result.time) time.push(result.time);
+      if (memKB !== null) memory.push(memKB);
+      if (timeSec !== null) time.push(timeSec);
       if (!passed) allPassed = false;
     }
 
