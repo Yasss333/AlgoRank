@@ -2,7 +2,7 @@
 
 A full-stack DSA (Data Structures & Algorithms) problem-solving platform inspired by LeetCode and Striver's TUF+ platform. Built as a production-style learning project to understand modern full-stack development: from frontend UI frameworks to backend APIs, database design, authentication, and deployment.
 
-**Live Demo:** [AlgoRank](https://algo-rank-333.vercel.app/) | **Backend API:** [Railway](algorank-production.up.railway.app)
+**Live Demo:** [AlgoRank](https://algo-rank.vercel.app) | **Backend API:** [Render](https://algorank-v14y.onrender.com) | **Database:** Neon | **Code Execution:** Self-hosted Piston (Oracle Cloud, Always Free)
 
 ---
 
@@ -19,6 +19,19 @@ Rather than following tutorials blindly, I chose to build an end-to-end applicat
 - Debugging and problem-solving across the entire stack
 
 The result is a functional platform where users can solve DSA problems, track progress, and organize problems into custom playlists—all while learning critical engineering patterns.
+
+---
+
+## 🆕 What's New (Recent Updates)
+
+- **Self-hosted code execution:** Replaced the public Piston API with our own Piston instance on Oracle Cloud (Always Free) — no API keys, no quotas, we control the runtimes.
+- **Reliable grading with a solution harness:** Added a wrapper that detects function-style and `class Solution`-style submissions (JS & Python), runs every test case through it, and compares outputs properly.
+- **Per-test metrics:** Submissions now record memory (KB) and time (s) for each test case and show them in the results.
+- **Submission history fixed:** The backend now returns the submission under a consistent key and orders by newest first — history actually loads.
+- **Leaderboard & rankings:** Global leaderboard plus per-user rank/stats cards.
+- **Create a problem flow that works:** Reference-solution validation is now best-effort (missing runtimes don't block creation) and the "Load Sample" buttons load the correct problem type.
+- **Auto-cleanup of demo problems:** Problems created during a session are deleted on logout, so the 500+ seeded problems stay clean.
+- **Seed data:** Now 500+ curated + auto-generated problems (was 30+).
 
 ---
 
@@ -50,13 +63,13 @@ The result is a functional platform where users can solve DSA problems, track pr
 | **Node.js** | JavaScript runtime | LTS version |
 | **Express.js** | Web framework & routing | 4.x |
 | **Prisma ORM** | Database ORM with type safety | Latest |
-| **PostgreSQL** | Relational database | 14+ |
+| **PostgreSQL** | Relational database | 14+ on Neon |
 | **JWT (jsonwebtoken)** | Authentication tokens | Industry standard |
 | **bcryptjs** | Password hashing | Secure salting (12 rounds) |
 | **Middleware Stack** | Auth verification, CORS, logging | Custom implementations |
 | **REST API** | RESTful endpoint design | 25+ endpoints |
 
-**Deployment:** Railway (with automatic database migrations)
+**Deployment:** Render (with automatic database migrations)
 
 ---
 
@@ -64,7 +77,7 @@ The result is a functional platform where users can solve DSA problems, track pr
 
 | Aspect | Implementation |
 |--------|----------------|
-| **Database** | PostgreSQL 14+ on Railway |
+| **Database** | PostgreSQL 14+ on Neon (serverless) |
 | **ORM** | Prisma with type-safe queries |
 | **Schema** | 8+ interconnected models with proper relations |
 | **Migrations** | Automated Prisma migrations on deploy |
@@ -78,10 +91,10 @@ The result is a functional platform where users can solve DSA problems, track pr
 
 | Service | Status | Purpose |
 |---------|--------|---------|
-| **Piston API** | ✅ Current | Open-source code execution for 50+ languages |
-| **Judge0** | 🔧 In Progress | Commercial-grade execution (was primary, debugging integration) |
+| **Piston API** | ✅ Current | Self-hosted on Oracle Cloud (Always Free) for 50+ languages |
+| **Judge0** | ❌ Retired | Was primary, replaced by self-hosted Piston |
 
-**Supported Languages:** JavaScript, Python, Java others will come soon.
+**Supported Languages:** JavaScript, Python, Java; C++ & others coming soon.
 
 ---
 
@@ -90,7 +103,7 @@ The result is a functional platform where users can solve DSA problems, track pr
 - **Authentication:** JWT-based with HTTP-only cookies
 - **State Sync:** Zustand store with localStorage persistence
 - **Real-time:** Toast notifications for user feedback
-- **Code Execution:** Piston API with async polling and error handling
+- **Code Execution:** Self-hosted Piston API (Oracle Cloud) with a solution harness and error handling
 
 ---
 
@@ -101,7 +114,7 @@ The result is a functional platform where users can solve DSA problems, track pr
 | **Git & GitHub** | Version control & repository hosting |
 | **VS Code** | Primary editor |
 | **Postman** | API testing and debugging |
-| **Railway CLI** | Database and deployment management |
+| **Render CLI** | Backend deployment management |
 | **Vercel CLI** | Frontend deployment and preview |
 | **npm** | Package management |
 
@@ -110,7 +123,7 @@ The result is a functional platform where users can solve DSA problems, track pr
 ## ✨ Current Features
 
 ### **Problem Solving**
-- ✅ Browse 30+ carefully curated DSA problems
+- ✅ Browse 500+ carefully curated DSA problems
 - ✅ Filter by difficulty (Easy, Medium, Hard)
 - ✅ Filter by topic (Arrays, Strings, Trees, etc.)
 - ✅ Filter by company (Amazon, Google, Microsoft, Meta, Apple)
@@ -148,7 +161,7 @@ The result is a functional platform where users can solve DSA problems, track pr
 
 ## 📚 Database Seeding
 
-AlgoRank comes with a database seeding script that populates your database with 30+ quality DSA problems from top companies.
+AlgoRank comes with a database seeding script that populates your database with 500+ quality DSA problems from top companies (curated + auto-generated).
 
 ### **Quick Start**
 ```bash
@@ -157,18 +170,19 @@ npm run seed
 ```
 
 ### **What Gets Seeded**
-- **30 DSA Problems** across Easy, Medium, and Hard difficulty levels
-- **25 Unique Tags** including company names, topic names, and difficulty levels
+- **500+ DSA Problems** across Easy, Medium, and Hard difficulty levels
+- **Tons of Unique Tags** including company names, topic names, and difficulty levels
 - **Multiple Code Templates** (JavaScript, Python, Java) for each problem
 - **Test Cases** (2-3 per problem) for validation
 - **Admin User** for problem creation
 
 ### **Companies Covered**
-- Amazon (8 problems)
-- Google (3 problems)
-- Microsoft (2 problems)
-- Meta (2 problems)
-- Apple (3 problems)
+- Amazon (8+ problems)
+- Google (3+ problems)
+- Microsoft (2+ problems)
+- Meta (2+ problems)
+- Apple (3+ problems)
+- Plus Netflix, Uber, Twitter, LinkedIn
 
 ### **API Endpoints for Filtering**
 ```bash
@@ -290,7 +304,7 @@ GET /api/problems/filter?search=two%20sum
                  │ HTTPS / REST API / JWT Auth
                  │
 ┌────────────────▼────────────────────────────────────────────┐
-│                  RAILWAY BACKEND                             │
+│                  RENDER BACKEND                             │
 │           Node.js + Express.js REST API                      │
 │                                                               │
 │  Routes: /auth, /problems, /submissions, /playlists          │
@@ -300,9 +314,9 @@ GET /api/problems/filter?search=two%20sum
         ┌────────┴──────────┐
         │                   │
 ┌───────▼────────┐   ┌──────▼──────────┐
-│  RAILWAY DB    │   │  PISTON API     │
-│  PostgreSQL    │   │  (Code Exec)    │
-│  + Prisma      │   │                 │
+│  NEON DATABASE    │   │  PISTON API     │
+│  PostgreSQL       │   │  (Oracle Cloud, │
+│  + Prisma         │   │  self-hosted)   │
 └────────────────┘   └─────────────────┘
 ```
 
@@ -339,7 +353,7 @@ DATABASE_URL=postgresql://user:password@host:port/db_name
 JWT_SECRET=your-super-secret-key
 PORT=3000
 NODE_ENV=development
-PISTON_API_URL=https://emkc.org/api/v2/piston
+PISTON_API_URL=http://your-oracle-host:2000/api/v2/execute
 ```
 
 **Frontend (.env.local)**
@@ -357,8 +371,8 @@ VITE_API_URL=http://localhost:3000
 - [ ] **Step-by-Step Debugger:** Built-in code debugger to trace execution
 
 ### **Phase 3: Gamification & Community**
-- [ ] **365-Day Heatmap:** GitHub-style contribution graph
-- [ ] **Leaderboard:** Rank users by problems solved and streak
+- [x] **365-Day Heatmap:** GitHub-style contribution graph
+- [x] **Leaderboard:** Rank users by problems solved and streak
 - [ ] **Badges & Achievements:** Unlock badges for milestones
 - [ ] **Likes & Comments:** Let users discuss problems in-platform
 - [ ] **Discussion Threads:** Problem-specific discussion forum
@@ -448,6 +462,6 @@ If you find bugs, have suggestions, or want to discuss architecture decisions, f
 
 ---
 
-**Last Updated:** January 2026  
+**Last Updated:** September 2026  
 **Status:** Active Development  
-**Next Focus:** AI-powered hints and expanded language support
+**Next Focus:** AI-powered hints and expanded language support (C++, more Python runtimes)
