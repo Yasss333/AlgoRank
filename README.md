@@ -6,7 +6,21 @@ A full-stack DSA (Data Structures & Algorithms) problem-solving platform inspire
 
 ---
 
-<video src="./frontend/src/assets/AlgoRank_DEMO_F.mp4" width="100%" controls></video>
+
+## 🎥 Demo
+<a href="https://youtu.be/ZXJrBuS1UO0">
+  <img src="frontend/src/assets/aglorank_banner.png" width="100%" alt="AlgoRank Demo">
+</a>
+
+<!-- [![AlgoRank Demo](frontend\src\assets\aglorank_banner.png)]("https://youtu.be/ZXJrBuS1UO0") -->
+<!-- <iframe
+  src="https://youtu.be/ZXJrBuS1UO0"
+  width="100%"
+  height="500"
+  frameborder="0"
+  allowfullscreen>
+</iframe> -->
+
 ## 🎯 Project Intent
 
 This project was built with a singular goal: **understand how real-world production applications are architected and deployed.**
