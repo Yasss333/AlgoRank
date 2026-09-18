@@ -109,7 +109,7 @@ const LandingPage = () => {
                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <button className="btn btn-outline btn-lg gap-2" >
-                <a href="#">Watch demo </a>
+                <a href="https://drive.google.com/file/d/1DkIWiyaZ-snOaYwPHBgsQPjpQF6dyrPn/view?usp=sharing">Watch demo </a>
               </button>
             </div>
 
