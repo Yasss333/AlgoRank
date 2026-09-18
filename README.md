@@ -7,7 +7,7 @@ A full-stack DSA (Data Structures & Algorithms) problem-solving platform inspire
 ---
 
 
-## 🎥 Demo
+## 🎥 Demo(Click the banner below )
 <a href="https://youtu.be/ZXJrBuS1UO0">
   <img src="frontend/src/assets/aglorank_banner.png" width="100%" alt="AlgoRank Demo">
 </a>
