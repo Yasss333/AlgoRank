@@ -30,10 +30,10 @@ export const addProblemInPlaylist = async (req, res) => {
   const userID = req.user.id;
 
   // 🔍 DEBUG LOGS 
-  console.log("problemID value:", problemID);//whole array 
-  console.log("problemID isArray:", Array.isArray(problemID));//true
-  console.log("type of problemID:", typeof problemID);//object
-  console.log("type of first element:", typeof problemID?.[0]);//string
+  // console.log("problemID value:", problemID);//whole array 
+  // console.log("problemID isArray:", Array.isArray(problemID));//true
+  // console.log("type of problemID:", typeof problemID);//object
+  // console.log("type of first element:", typeof problemID?.[0]);//string
 
   try {
     if (!Array.isArray(problemID) || problemID.length === 0) {

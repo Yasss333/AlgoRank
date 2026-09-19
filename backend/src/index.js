@@ -24,10 +24,12 @@ const allowedOrigins = [
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
+    //this is for postman curl request as they might not ave a origin they shoud be passed 
 
     if (
       allowedOrigins.includes(origin) ||
       origin.endsWith(".vercel.app")
+      //all .vercel links are whitelisted
     ) {
       return callback(null, true);
     }
@@ -60,7 +62,9 @@ app.use((req, res, next) => {
 // IMPORTANT: handle preflight explicitly
 
 app.use(cookieParser());
+//for converting json to object ex:req.body 
 app.use(express.json());
+//for html form data 
 app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 5000;
 

@@ -7,7 +7,6 @@ import { z } from "zod";
 import AuthImagePattern from "../Components/AuthImagePattern";
 import { useAuthStore } from '../store/useAuthStore.js';
 
-
 const LoginSchema=z.object({
     email:z.string().email("Enter valid Email"),
     password:z.string().min(6,"Password Should have min 6 characters"),

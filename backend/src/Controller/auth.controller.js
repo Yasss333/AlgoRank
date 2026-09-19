@@ -28,13 +28,13 @@ const userRegisterHandler = async (req, res) => {
       },
     });
 
-    console.log("JWT SECRET:", process.env.SECRET);
-    console.log("USER ID:", user?.id);
+    // console.log("JWT SECRET:", process.env.SECRET);
+    // console.log("USER ID:", user?.id);
 
     const token = jwt.sign({ id: user.id }, process.env.SECRET, {
       expiresIn: "10d",
     });
-      console.log("Token : ",token);
+      // console.log("Token : ",token);
       
     res.cookie("jwt", token, {
       httpOnly: true,
@@ -79,7 +79,7 @@ const userLoginHandler = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       res.status(401).json({
-        message: "User Does not exist , Please try again wrog credentnials ",
+        message: "User Does not exist , Please try again wrong credentnials ",
       });
     }
     const token = jwt.sign({ id: user.id }, process.env.SECRET, {
@@ -128,7 +128,7 @@ const userLogoutHandler = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Milte hau bhai bye",
+      message: "Milte hai bhai bye",
     });
   } catch (error) {
     res.status(400).json({
@@ -161,9 +161,7 @@ const userCheckHandler = async (req, res) => {
     success: true , 
     message:"Ha bhai karliya check bohot  khub",
     user:user,
-    
     })
- 
 };
   
 export {

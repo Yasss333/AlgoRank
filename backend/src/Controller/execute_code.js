@@ -8,8 +8,8 @@ import { buildRunnable } from "../libs/codeHarness.js";
 // the below code is just a dry run prcess no db writes done , it is like run over testcases 
 export const executionRouter = async (req, res) => {
   const { sourceCode, languageKey, stdin } = req.body;
-     console.log("REQ.BODY:", req.body);
-  console.log("REQ.USER:", req.user);
+    //  console.log("REQ.BODY:", req.body);
+  // console.log("REQ.USER:", req.user);
   try {
     if (!sourceCode || !languageKey) {
       return res.status(400).json({
@@ -64,8 +64,8 @@ export const submitCodeHandler = async (req, res) => {
   }
   const userID = req.user.id;
 
-  console.log("SUBMIT REQ.BODY:", req.body);
-  console.log("SUBMIT REQ.USER:", req.user);
+  // console.log("SUBMIT REQ.BODY:", req.body);
+  // console.log("SUBMIT REQ.USER:", req.user);
 
   try {
     if (!sourceCode || !languageKey || !problemId) {
@@ -142,7 +142,7 @@ export const submitCodeHandler = async (req, res) => {
       if (!passed) allPassed = false;
     }
 
-    // Create submission in database
+    // Create submission in database 
     const submission = await db.submission.create({
       data: {
         userID,

@@ -2,6 +2,7 @@
 // graded against stdin/expected-output test cases. LeetCode-style problems give
 // the user a function-only or class-based snippet that never reads stdin or
 // prints anything. This harness appends a runner that:
+// this is like th leetcode sytle where in user just needs to write the logic 
 //   1. reads all of stdin,
 //   2. parses each line as a JSON argument (LeetCode convention: one arg per line),
 //   3. calls the solution (function) or instantiates the class and calls the method,
@@ -19,6 +20,7 @@ const jsClassRegex = /class\s+([A-Za-z_$][\w$]*)\s*\{/;
 const jsMethodRegex = /\b([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/;
 const pyClassRegex = /^\s*class\s+([A-Za-z_][\w]*)\s*[:\(]/m;
 const pyMethodRegex = /^\s*def\s+([A-Za-z_][\w]*)\s*\(/m;
+
 
 export function extractFunctionName(sourceCode) {
   for (const re of jsFnRegexes) {

@@ -154,6 +154,7 @@ const getallProblemHandler = async (req, res) => {
 //     });
 //   }
 // };
+
 const getProblemByIDHandler = async (req, res) => {
   const {id}=req.params;
   try {
@@ -180,6 +181,7 @@ const getProblemByIDHandler = async (req, res) => {
     });
   }
 };
+
 const   updateProblemByIDHandler = async (req, res) => {
   const {id}=req.params;
     const {
@@ -230,6 +232,7 @@ console.log("Updated  Problem :" +updatedProblem );
     })
   }
 };
+
 const deleteProblemByIDHandler = async (req, res) => {
   const {id}=req.params;
   try {
@@ -256,6 +259,7 @@ const deleteProblemByIDHandler = async (req, res) => {
     })
   }
 };
+
 const getSolvedProblemByUserHandler = async (req, res) => {
   try {
     const problems = await db.problem.findMany({
