@@ -12,7 +12,7 @@ export const useAuthStore = create((set) => ({
     set({ isCheckingAuth: true });
     try {
       const res = await api.get("/auth/check");
-      console.log("checkauth response", res.data);
+      // console.log("checkauth response", res.data);
 
       set({ authUser: res.data.user });
     } catch (error) {

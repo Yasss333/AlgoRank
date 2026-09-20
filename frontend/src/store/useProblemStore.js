@@ -15,7 +15,7 @@ export const useProblemStore=create((set)=>({
             set({isProblemsLoading:true})
             
             const res= await api.get("/problems/get-all-problems");
-            console.log("API Response:", res.data);
+            // console.log("API Response:", res.data);``
             
             if (res.data && res.data.problems) {
                 set({problems:res.data.problems})
