@@ -3,6 +3,28 @@ import api from "../lib/axios";
 import toast from "react-hot-toast";
 import { getStatusDescription, getErrorMessage } from "../lib/judge0Status";
 
+const showExecutionError = (error, fallbackMessage) => {
+  const response = error.response?.data;
+  if (error.response?.status === 429 && response?.code === "EXECUTION_QUOTA_EXCEEDED") {
+    const retryAt = Date.parse(response.retryAt);
+    let renewalDelay = "24 hours";
+
+    if (Number.isFinite(retryAt)) {
+      const totalMinutes = Math.max(1, Math.ceil((retryAt - Date.now()) / 60000));
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      renewalDelay = hours > 0
+        ? `${hours}h ${minutes}m`
+        : `${minutes} minute${minutes === 1 ? "" : "s"}`;
+    }
+
+    toast.error(`You've used all 5 free executions. Code execution will be available again in ${renewalDelay}, when your quota renews. Developer is Poor rn`);
+    return;
+  }
+
+  toast.error(response?.error || response?.message || error.message || fallbackMessage);
+};
+
 export const useExecutionStore = create((set) => ({
   isExecuting: false,
   submission: null,
@@ -42,8 +64,7 @@ executeCode: async ({ sourceCode, languageKey, stdin }) => {
     set({ submission: result });
   } catch (error) {
     console.error("Error executing code", error);
-    const errorMessage = error.response?.data?.error || error.message || "Error executing code";
-    toast.error(errorMessage);
+    showExecutionError(error, "Error executing code");
   } finally {
     set({ isExecuting: false });
   }
@@ -87,8 +108,7 @@ submitCode: async ({ sourceCode, languageKey, stdin, problemId, expectedOutputs,
     return res.data.submission;
   } catch (error) {
     console.error("Error submitting code", error);
-    const errorMessage = error.response?.data?.error || error.message || "Error submitting code";
-    toast.error(errorMessage);
+    showExecutionError(error, "Error submitting code");
     throw error;
   } finally {
     set({ isExecuting: false });

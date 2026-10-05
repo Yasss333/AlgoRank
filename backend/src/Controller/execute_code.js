@@ -2,6 +2,7 @@ import { db } from "../libs/db.js";
 import { updateUserRankingStats } from "../utils/rankingUtils.js";
 import { safeRunCodeWithPiston } from "../libs/pistonlibs.js";
 import { buildRunnable } from "../libs/codeHarness.js";
+import { reserveExecution, sendQuotaExceeded } from "../libs/executionQuota.js";
 
 
 // controllers/execute_code.js
@@ -20,6 +21,11 @@ export const executionRouter = async (req, res) => {
     const runnable = buildRunnable({ language: languageKey.toUpperCase(), sourceCode });
     if (!runnable.ok) {
       return res.status(400).json({ message: runnable.reason });
+    }
+
+    const quota = await reserveExecution(req.user.id);
+    if (!quota.allowed) {
+      return sendQuotaExceeded(res, quota.retryAt);
     }
 
     // Run code against the self-hosted Piston API
@@ -83,6 +89,18 @@ export const submitCodeHandler = async (req, res) => {
       : (stdin ? stdin.split("\n").filter(s => s.trim() !== "") : [])
           .map((input, i) => ({ input, expected: String(expectedOutputs?.[i] ?? "").trim() }));
 
+    if (cases.length === 0) {
+      return res.status(400).json({ message: "At least one test case is required to submit code." });
+    }
+
+    const problem = await db.problem.findUnique({
+      where: { id: problemId },
+      select: { id: true },
+    });
+    if (!problem) {
+      return res.status(404).json({ message: "Problem not found." });
+    }
+
     let allPassed = true;
     let memory = [];
     let time = [];
@@ -94,6 +112,11 @@ export const submitCodeHandler = async (req, res) => {
       return res.status(400).json({ message: runnable.reason });
     }
     const runnableSource = runnable.source;
+
+    const quota = await reserveExecution(userID);
+    if (!quota.allowed) {
+      return sendQuotaExceeded(res, quota.retryAt);
+    }
 
     for (let i = 0; i < cases.length; i++) {
       const { input, expected } = cases[i];

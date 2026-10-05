@@ -39,7 +39,8 @@ The result is a functional platform where users can solve DSA problems, track pr
 
 ## 🆕 What's New (Recent Updates)
 
-- **Self-hosted code execution:** Replaced the public Piston API with our own Piston instance on Oracle Cloud (Always Free) — no API keys, no quotas, we control the runtimes.
+- **Self-hosted code execution:** Replaced the public Piston API with our own Piston instance on Oracle Cloud (Always Free) — no API keys or third-party API quotas; we control the runtimes.
+- **Execution quota:** Authenticated users can run or submit code up to five times in a rolling 24-hour window; excess requests are blocked before reaching Piston and show the time until quota renewal.
 - **Reliable grading with a solution harness:** Added a wrapper that detects function-style and `class Solution`-style submissions (JS & Python), runs every test case through it, and compares outputs properly.
 - **Per-test metrics:** Submissions now record memory (KB) and time (s) for each test case and show them in the results.
 - **Submission history fixed:** The backend now returns the submission under a consistent key and orders by newest first — history actually loads.

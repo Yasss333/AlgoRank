@@ -91,6 +91,16 @@ export const verfiyJWT = async (req, res, next) => {
   }
 };
 
+export const requireAuth = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({
+      code: "AUTHENTICATION_REQUIRED",
+      message: "Please log in to run or submit code.",
+    });
+  }
+
+  return next();
+};
 
 export const validateAdmin=(async(req,res,next)=>{
       if (!req.user) {

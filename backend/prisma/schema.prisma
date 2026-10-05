@@ -45,6 +45,7 @@ model User {
 
   problems      Problem[]
   submissions   Submission[]
+  executionUsages ExecutionUsage[]
   problemSolved problemSolved[]
   playlist playlist[]
   likes Likes[]
@@ -102,6 +103,16 @@ model Submission {
   problem Problem @relation(fields: [problemID], references: [id])
 
   testcases Testcases[]
+}
+
+model ExecutionUsage {
+  id        String   @id @default(uuid())
+  userID    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userID], references: [id], onDelete: Cascade)
+
+  @@index([userID, createdAt])
 }
 
 model Testcases {
@@ -205,4 +216,3 @@ model NestedComments{
   user User @relation(fields: [userID] ,references: [id], onDelete: Cascade, onUpdate:Cascade)
   
 }
-
